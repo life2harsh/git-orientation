@@ -1,27 +1,30 @@
 name: Verify and Merge Submission
-'on':
+on:
   pull_request:
     paths:
-      - submissions/**
+      - 'submissions/**'
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Verify Submission Hash
         env:
-          CORRECT_ANSWERS_JSON: '${{ secrets.CORRECT_ANSWERS_JSON }}'
+          CORRECT_ANSWERS_JSON: ${{ secrets.CORRECT_ANSWERS_JSON }}
         run: python tools/verify.py
+
       - name: Auto-merge PR
         if: success()
         env:
-          GITHUB_TOKEN: '${{ secrets.TOKEN }}'
-          PR_NUMBER: '${{ github.event.pull_request.number }}'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           gh pr merge $PR_NUMBER --auto --squash --delete-branch
           echo "PR #${PR_NUMBER} has been automatically merged."
