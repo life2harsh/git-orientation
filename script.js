@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const DECRYPTION_KEY = 'Th1s_1s_a_S@mpl3_S3cure_K3y_32ch'; 
+    const DECRYPTION_KEY = 'Th1s_1s_a_S@mpl3_S3cure_K3y_32ch';
 
     const questionsContainer = document.getElementById('questions-container');
     const submissionForm = document.getElementById('submission-form');
