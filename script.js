@@ -107,7 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const answerHash = await sha256(answer);
         const finalHash = await sha256(usernameHash + answerHash + nonce);
         const outputString = `${finalHash}:${nonce}`;
+        
         document.getElementById('output').textContent = outputString;
+        document.getElementById('result').classList.add('visible');
         document.getElementById('result').classList.remove('hidden');
     }
 
