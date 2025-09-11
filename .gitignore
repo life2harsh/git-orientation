@@ -1,0 +1,4 @@
+.env
+questions.json
+__pycache__/
+*.pyc

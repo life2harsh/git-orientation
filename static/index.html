@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Workshop Challenge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Git Workshop Challenge</h1>
+        <div id="questions-container">
+            <p>Loading questions...</p>
+        </div>
+        <div id="submission-form" class="hidden">
+            <h2 id="question-title"></h2>
+            <div class="form-group">
+                <label for="username">Your GitHub Username:</label>
+                <input type="text" id="username" placeholder="e.g., octocat" required>
+            </div>
+            <div class="form-group">
+                <label for="answer">Your Answer:</label>
+                <input type="text" id="answer" placeholder="Type your full command here" required>
+            </div>
+            <button id="generate-btn">Generate Submission String</button>
+        </div>
+        <div id="result" class="hidden">
+            <h2>Your Submission String (Copy This):</h2>
+            <pre id="output"></pre>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
