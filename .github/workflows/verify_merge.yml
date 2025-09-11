@@ -21,7 +21,7 @@ jobs:
       - name: Verify Submission Hash
         env:
           CORRECT_ANSWERS_JSON: '${{ secrets.CORRECT_ANSWERS_JSON }}'
-        run: python tools/verify_pr.py
+        run: python tools/verify.py
       - name: Auto-merge PR
         if: success()
         env:
