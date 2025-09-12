@@ -29,6 +29,14 @@ jobs:
           CORRECT_ANSWERS_JSON: ${{ secrets.CORRECT_ANSWERS_JSON }}
         run: python tools/verify.py
 
+      - name: Notify PR about incorrect submission
+        if: failure()
+        run: |
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            --request POST \
+            --data '{"body": "Your submission is incorrect. Please review and submit again."}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+
       - name: Auto-merge PR
         if: success()
         env:
@@ -37,3 +45,4 @@ jobs:
         run: |
           gh pr merge $PR_NUMBER --auto --squash --delete-branch
           echo "PR #${PR_NUMBER} has been automatically merged."
+
