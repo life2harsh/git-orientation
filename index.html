@@ -5,30 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Workshop Challenge</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>Git Workshop Challenge</h1>
-        <div id="questions-container">
-            <p>Loading questions...</p>
+        <div class="header">
+            <h1>Git Orientation</h1>
+            <p>Select a question below and provide your answer to generate submission string.</p>
         </div>
-        <div id="submission-form" class="hidden">
-            <h2 id="question-title"></h2>
+        
+        <div id="questions-container" class="questions-container">
+            <div class="loading-container">
+                <span class="loading"></span>
+                <p>Loading questions...</p>
+            </div>
+        </div>
+        
+        <div id="submission-form" class="submission-form hidden">
+            <h3 id="question-title"></h3>
             <div class="form-group">
-                <label for="username">Your GitHub Username:</label>
-                <input type="text" id="username" placeholder="e.g., octocat" required>
+                <label for="username">GitHub Username</label>
+                <input type="text" id="username" placeholder="Enter username" required>
             </div>
             <div class="form-group">
-                <label for="answer">Your Answer:</label>
-                <input type="text" id="answer" placeholder="Type your full command here" required>
+                <label for="answer">Your Answer</label>
+                <input type="text" id="answer" placeholder="Answer here " required>
             </div>
-            <button id="generate-btn">Generate Submission String</button>
+            <button id="generate-btn" class="btn-primary">
+                <span>Generate Submission String</span>
+            </button>
         </div>
-        <div id="result" class="hidden">
-            <h2>Your Submission String (Copy This):</h2>
-            <pre id="output"></pre>
-        </div>
+        
+        <div id="result" class="result-section hidden">
+            <h3>Your Submission String</h3>
+            <div class="code-block">
+                <pre id="output"></pre>
+                <button id="copy-btn" class="copy-btn">
+                    <span class="copy-icon"></span>
+                    <span class="copy-text">Copy</span>
+                </button>
+            </div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
