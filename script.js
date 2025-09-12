@@ -75,44 +75,153 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayQuestions(questions) {
-        questionsContainer.innerHTML = '<h2>Select a Question:</h2>';
+        const questionsContainer = document.getElementById('questions-container');
+        questionsContainer.innerHTML = '';
         questions.forEach(q => {
-            const button = document.createElement('button');
-            button.className = 'question-btn';
-            button.textContent = `Question ${q.id}`;
-            button.dataset.id = q.id;
-            button.dataset.question = q.question;
-            button.addEventListener('click', () => selectQuestion(q));
-            questionsContainer.appendChild(button);
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-item';
+            questionDiv.innerHTML = `
+                <h3>Question ${q.id}</h3>
+                <p>${q.question}</p>
+            `;
+            questionDiv.addEventListener('click', () => selectQuestion(q));
+            questionsContainer.appendChild(questionDiv);
         });
     }
 
     function selectQuestion(question) {
         selectedQuestionId = question.id;
-        questionTitle.textContent = `Submitting for Q${question.id}: ${question.question}`;
-        submissionForm.classList.remove('hidden');
+        document.querySelectorAll('.question-item').forEach(item => item.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+        const questionTitle = document.getElementById('question-title');
+        questionTitle.textContent = `Question ${question.id}: ${question.question}`;
+        document.getElementById('submission-form').classList.remove('hidden');
         document.getElementById('result').classList.add('hidden');
-        document.querySelectorAll('.question-btn').forEach(btn => btn.style.backgroundColor = '');
-        const selectedBtn = document.querySelector(`.question-btn[data-id='${question.id}']`);
-        selectedBtn.style.backgroundColor = '#0056b3';
+        document.getElementById('result').classList.remove('visible');
+        document.getElementById('submission-form').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+        });
     }
 
     async function handleGenerate() {
         const username = document.getElementById('username').value.trim();
         const answer = document.getElementById('answer').value.trim();
-        if (!username || !answer) return alert("Please provide a username and an answer.");
 
-        const nonce = generateNonce();
-        const usernameHash = await sha256(username);
-        const answerHash = await sha256(answer);
-        const finalHash = await sha256(usernameHash + answerHash + nonce);
-        const outputString = `${finalHash}:${nonce}`;
-        
-        document.getElementById('output').textContent = outputString;
-        document.getElementById('result').classList.add('visible');
-        document.getElementById('result').classList.remove('hidden');
+        if (!username || !answer) {
+            alert("Please provide both your GitHub username and answer.");
+            return;
+        }
+
+        const generateBtn = document.getElementById('generate-btn');
+        const originalText = generateBtn.innerHTML;
+        generateBtn.innerHTML = '<span class="loading"></span> Generating...';
+        generateBtn.disabled = true;
+
+        try {
+            const nonce = generateNonce();
+            const usernameHash = await sha256(username);
+            const answerHash = await sha256(answer);
+            const finalHash = await sha256(usernameHash + answerHash + nonce);
+            const outputString = `${finalHash}:${nonce}`;
+            document.getElementById('output').textContent = outputString;
+            const resultSection = document.getElementById('result');
+            resultSection.classList.add('visible');
+            resultSection.classList.remove('hidden');
+
+            resultSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+
+        } catch (error) {
+            console.error('Error generating submission:', error);
+            alert('Error generating submission string. Please try again.');
+        } finally {
+            generateBtn.innerHTML = originalText;
+            generateBtn.disabled = false;
+        }
+    }
+
+    function initializeCopyButton() {
+        const copyBtn = document.getElementById('copy-btn');
+        if (!copyBtn) return;
+
+        copyBtn.addEventListener('click', async () => {
+            const output = document.getElementById('output').textContent;
+
+            try {
+                await navigator.clipboard.writeText(output);
+
+                copyBtn.classList.add('copied');
+                const originalText = copyBtn.querySelector('.copy-text').textContent;
+                copyBtn.querySelector('.copy-text').textContent = 'Copied!';
+
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.querySelector('.copy-text').textContent = originalText;
+                }, 2000);
+
+            } catch (err) {
+
+                const textArea = document.createElement('textarea');
+                textArea.value = output;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                copyBtn.querySelector('.copy-text').textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.querySelector('.copy-text').textContent = 'Copy to Clipboard';
+                }, 2000);
+            }
+        });
+    }
+
+    function initializeNewChallengeButton() {
+        const newChallengeBtn = document.getElementById('new-challenge-btn');
+        if (!newChallengeBtn) return;
+
+        newChallengeBtn.addEventListener('click', () => {
+            document.getElementById('username').value = '';
+            document.getElementById('answer').value = '';
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('result').classList.remove('visible');
+            document.getElementById('submission-form').classList.add('hidden');
+            document.querySelectorAll('.question-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            document.getElementById('challenge').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        });
+    }
+
+    function initializeSmoothScrolling() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     }
 
     document.getElementById('generate-btn').addEventListener('click', handleGenerate);
+
+    setTimeout(() => {
+        initializeCopyButton();
+        initializeNewChallengeButton();
+        initializeSmoothScrolling();
+    }, 100);
+
     loadAndDecryptQuestions();
 });
