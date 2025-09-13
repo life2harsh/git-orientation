@@ -1,0 +1,50 @@
+name: Check Commit Signatures
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+    paths:
+      - 'submissions/**'
+
+jobs:
+  check_commit_signatures:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: pip install requests
+
+      - name: Check Commit Signatures for GitHub Web Usage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python tools/check_commit_signatures.py
+
+      - name: Notify PR about commits made using GitHub web interface
+        if: failure()
+        run: |
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            --request POST \
+            --data '{"body": "One or more commits were made using GitHub web interface. Please re-submit the PR without using the web interface."}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+
+      - name: Close the PR
+        if: failure()
+        run: |
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            --request PATCH \
+            --data '{"state": "closed"}' \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}"
+
