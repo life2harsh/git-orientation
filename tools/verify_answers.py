@@ -2,10 +2,11 @@ import os
 import json
 import hashlib
 import sys
+import requests
 
 TOKEN = os.getenv("GITHUB_TOKEN")
-REPO  = os.getenv("GITHUB_REPOSITORY")   # this for owner/repo
-PRNUM = os.getenv("GITHUB_PR_NUMBER")    
+REPO  = os.getenv("GITHUB_REPOSITORY")
+PRNUM = os.getenv("GITHUB_PR_NUMBER")
 
 HEADERS = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github+json"}
 
@@ -25,7 +26,6 @@ def sha256(message):
     return hashlib.sha256(message.encode('utf-8')).hexdigest()
 
 def verify_submission():
-
     branch_name = os.getenv('GITHUB_HEAD_REF')
     if not branch_name:
         print("Error: Could not determine branch name.")
@@ -34,15 +34,15 @@ def verify_submission():
     user  = get_pr_author()
     files = get_changed_files()
     
-    for f in files:
-        question_id=-1
+    for path in files:
         try:
-            with open(f, 'r') as f:
-                content = f.read().strip()
+            filename = path
+            with open(filename, 'r', encoding='utf-8') as fh:
+                content = fh.read().strip()
                 question_id = int(filename.split("_q")[1].split(".txt")[0])
             submitted_hash, nonce = content.split(':')
         except (FileNotFoundError, ValueError):
-            print(f"Error: Could not read or parse the submission file: {submission_file}")
+            print(f"Error: Could not read or parse the submission file: {filename}")
             sys.exit(1)
 
         answers_json = os.getenv('CORRECT_ANSWERS_JSON')
@@ -51,21 +51,22 @@ def verify_submission():
             sys.exit(1)
 
         correct_answers = json.loads(answers_json)
-        correct_answer = correct_answers.get(question_id)
+        correct_answer = correct_answers.get(question_id) or correct_answers.get(str(question_id))
         if not correct_answer:
             print(f"Error: No answer found for question ID {question_id}.")
             sys.exit(1)
 
-        username_hash = sha256(username)
-        answer_hash = sha256(correct_answer)
+        username_hash = sha256(user)
+        answer_hash = sha256(str(correct_answer))
         expected_hash = sha256(username_hash + answer_hash + nonce)
 
         if expected_hash == submitted_hash:
-            print(f"Answer for Q{question_id} by {username} is correct.")
+            print(f"Answer for Q{question_id} by {user} is correct.")
             sys.exit(0) 
         else:
-            print(f"Answer for Q{question_id} by {username} is incorrect.")
+            print(f"Answer for Q{question_id} by {user} is incorrect.")
             sys.exit(1) 
 
 if __name__ == "__main__":
     verify_submission()
+
