@@ -1,5 +1,4 @@
 name: Verify and Merge Submission
-
 on:
   workflow_run:
     workflows: ["Check Author"]
@@ -16,6 +15,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
 
     steps:
       - name: Checkout PR head
@@ -28,7 +29,9 @@ jobs:
       - name: Capture PR metadata
         run: |
           echo "PR_NUMBER=${{ github.event.workflow_run.pull_requests[0].number }}" >> $GITHUB_ENV
+          echo "GITHUB_PR_NUMBER=${{ github.event.workflow_run.pull_requests[0].number }}" >> $GITHUB_ENV
           echo "HEAD_SHA=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
+          echo "GITHUB_HEAD_REF=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -39,7 +42,7 @@ jobs:
       - name: Verify Submission Hash
         env:
           CORRECT_ANSWERS_JSON: ${{ secrets.CORRECT_ANSWERS_JSON }}
-        run: python tools/verify_answers.py   
+        run: python tools/verify_answers.py
 
       - name: Notify PR about incorrect submission
         if: failure()
@@ -64,5 +67,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge "$PR_NUMBER" -R "${{ github.repository }}" --squash --delete-branch --auto -y
-          echo "PR #$PR_NUMBER has been automatically merged."
+          gh pr merge "$PR_NUMBER" \
+            --squash \
+            --delete-branch \
+            --repo "${{ github.repository }}" \
+            --match-head-commit "$HEAD_SHA" \
+            --auto
+          echo "PR #$PR_NUMBER queued for auto-merge."
+
