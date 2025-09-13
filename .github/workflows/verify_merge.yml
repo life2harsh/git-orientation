@@ -38,7 +38,7 @@ jobs:
       - name: Verify Submission Hash
         env:
           CORRECT_ANSWERS_JSON: ${{ secrets.CORRECT_ANSWERS_JSON }}
-        run: python tools/verify.py
+        run: python tools/verify_answers.py
 
       - name: Notify PR about incorrect submission
         if: failure()
