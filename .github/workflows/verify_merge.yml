@@ -64,6 +64,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge "$PR_NUMBER" --squash --delete-branch
+          gh pr merge "$PR_NUMBER" --squash --delete-branch --repo "${{ github.repository }}"
           echo "PR #$PR_NUMBER has been automatically merged."
-
