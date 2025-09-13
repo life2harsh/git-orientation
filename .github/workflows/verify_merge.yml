@@ -1,48 +1,77 @@
 name: Verify and Merge Submission
-
 on:
-  pull_request_target:
-    types: [opened, synchronize]
-    paths:
-      - 'submissions/**'
+  workflow_run:
+    workflows: ["Check Author"]
+    types: [completed]
 
 jobs:
   verify:
+    if: >
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'pull_request'
+      }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-      
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+
     steps:
-      - name: Checkout PR code
+      - name: Checkout PR head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+
+      - name: Capture PR metadata
+        run: |
+          echo "PR_NUMBER=${{ github.event.workflow_run.pull_requests[0].number }}" >> $GITHUB_ENV
+          echo "GITHUB_PR_NUMBER=${{ github.event.workflow_run.pull_requests[0].number }}" >> $GITHUB_ENV
+          echo "HEAD_SHA=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
+          echo "GITHUB_HEAD_REF=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+      - run: pip install requests
 
       - name: Verify Submission Hash
         env:
           CORRECT_ANSWERS_JSON: ${{ secrets.CORRECT_ANSWERS_JSON }}
-        run: python tools/verify.py
+        run: python tools/verify_answers.py
 
       - name: Notify PR about incorrect submission
         if: failure()
         run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            --request POST \
-            --data '{"body": "Your submission is incorrect. Please review and submit again."}' \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+          curl -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github+json" \
+               --request POST \
+               --data "{\"body\": \"Your submission is incorrect. Please review and submit again.\"}" \
+               "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+
+      - name: Close the PR
+        if: failure()
+        run: |
+          curl -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github+json" \
+               --request PATCH \
+               --data '{"state":"closed"}' \
+               "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}"
 
       - name: Auto-merge PR
         if: success()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge $PR_NUMBER --auto --squash --delete-branch
-          echo "PR #${PR_NUMBER} has been automatically merged."
+          gh pr merge "$PR_NUMBER" \
+            --squash \
+            --delete-branch \
+            --repo "${{ github.repository }}" \
+            --match-head-commit "$HEAD_SHA" \
+            --auto
+          echo "PR #$PR_NUMBER queued for auto-merge."
 
