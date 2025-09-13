@@ -47,8 +47,7 @@ def main():
         print("Allowed: submissions/{username}/{username}_q{number}.txt")
         print("Changed files:")
         for f in files:
-            mark = "✔" if f in valid_files else "✖"
-            print(f"   {mark} {f}")
+            print(f"{f}")
         sys.exit(1)
 
     print("All changes valid.")
