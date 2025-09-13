@@ -34,16 +34,17 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+      - run: pip install requests
 
       - name: Verify Submission Hash
         env:
           CORRECT_ANSWERS_JSON: ${{ secrets.CORRECT_ANSWERS_JSON }}
-        run: python tools/verify_answers.py
+        run: python tools/verify_answers.py   
 
       - name: Notify PR about incorrect submission
         if: failure()
         run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          curl -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github+json" \
                --request POST \
                --data "{\"body\": \"Your submission is incorrect. Please review and submit again.\"}" \
@@ -52,7 +53,7 @@ jobs:
       - name: Close the PR
         if: failure()
         run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          curl -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github+json" \
                --request PATCH \
                --data '{"state":"closed"}' \
@@ -61,7 +62,7 @@ jobs:
       - name: Auto-merge PR
         if: success()
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh pr merge "$PR_NUMBER" --squash --delete-branch
           echo "PR #$PR_NUMBER has been automatically merged."
