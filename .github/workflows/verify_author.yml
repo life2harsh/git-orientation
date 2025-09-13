@@ -1,4 +1,4 @@
-name: Verify and Merge Submission
+name: Check Author
 
 on:
   pull_request_target:
@@ -7,36 +7,39 @@ on:
       - 'submissions/**'
 
 jobs:
-  verify:
+  check_authors:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       pull-requests: write
-      
+      contents: read
+    
     steps:
       - name: Checkout PR code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
+          python-version: '3.13'
+      - run: pip install requests
 
-      - name: Verify Submission Hash
+      - name: Check Author for Security
         env:
-          CORRECT_ANSWERS_JSON: ${{ secrets.CORRECT_ANSWERS_JSON }}
-        run: python tools/verify.py
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python tools/validate_pr_paths.py 
 
-      - name: Notify PR about incorrect submission
+      - name: Notify PR about invalid file edits
         if: failure()
         run: |
           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             --request POST \
-            --data '{"body": "Your submission is incorrect. Please review and submit again."}' \
+            --data '{"body": "One or more files modified outside the allowed directory. Please modify files under directory named as your Github-Username only and re-submit the PR."}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
-      
+
       - name: Close the PR
         if: failure()
         run: |
@@ -44,13 +47,4 @@ jobs:
             --request PATCH \
             --data '{"state": "closed"}' \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}"
-
-      - name: Auto-merge PR
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh pr merge $PR_NUMBER --auto --squash --delete-branch
-          echo "PR #${PR_NUMBER} has been automatically merged."
 

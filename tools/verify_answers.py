@@ -13,15 +13,11 @@ def verify_submission():
         print("Error: Could not determine branch name.")
         sys.exit(1)
 
-    try:
-        parts = branch_name.split('-')
-        username = parts[1]
-        question_id = parts[2].replace('q', '')
-    except IndexError:
-        print(f"Error: Branch name '{branch_name}' is not in the format 'submit-username-qNumber'.")
-        sys.exit(1)
+    parts = branch_name.split('-')
+    username = parts[1]
+    question_id = parts[2].replace('q', '')
 
-    submission_file = f"submissions/{username}_q{question_id}.txt"
+    submission_file = f"submissions/{username}/{username}_q{question_id}.txt"
     try:
         with open(submission_file, 'r') as f:
             content = f.read().strip()
