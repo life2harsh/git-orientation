@@ -3,6 +3,24 @@ import json
 import hashlib
 import sys
 
+TOKEN = os.getenv("GITHUB_TOKEN")
+REPO  = os.getenv("GITHUB_REPOSITORY")   # this for owner/repo
+PRNUM = os.getenv("GITHUB_PR_NUMBER")    
+
+HEADERS = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github+json"}
+
+def get_pr_author():
+    url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}"
+    r = requests.get(url, headers=HEADERS)
+    r.raise_for_status()
+    return r.json()["user"]["login"].lower()
+
+def get_changed_files():
+    url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}/files?per_page=100"
+    r = requests.get(url, headers=HEADERS)
+    r.raise_for_status()
+    return [f["filename"].lower() for f in r.json()]
+
 def sha256(message):
     return hashlib.sha256(message.encode('utf-8')).hexdigest()
 
@@ -13,18 +31,17 @@ def verify_submission():
         print("Error: Could not determine branch name.")
         sys.exit(1)
 
-    parts = branch_name.split('-')
-    username = parts[1]
-    question_id = parts[2].replace('q', '')
-
-    submission_file = f"submissions/{username}/{username}_q{question_id}.txt"
-    try:
-        with open(submission_file, 'r') as f:
-            content = f.read().strip()
-        submitted_hash, nonce = content.split(':')
-    except (FileNotFoundError, ValueError):
-        print(f"Error: Could not read or parse the submission file: {submission_file}")
-        sys.exit(1)
+    user  = get_pr_author()
+    files = get_changed_files()
+    
+    for f in files:
+        try:
+            with open(f, 'r') as f:
+                content = f.read().strip()
+            submitted_hash, nonce = content.split(':')
+        except (FileNotFoundError, ValueError):
+            print(f"Error: Could not read or parse the submission file: {submission_file}")
+            sys.exit(1)
 
     answers_json = os.getenv('CORRECT_ANSWERS_JSON')
     if not answers_json:
