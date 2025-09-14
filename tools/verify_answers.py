@@ -8,8 +8,9 @@ TOKEN = os.getenv("GITHUB_TOKEN")
 REPO  = os.getenv("GITHUB_REPOSITORY")
 PRNUM = os.getenv("GITHUB_PR_NUMBER")
 
-HEADERS = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github+json"}
-HEADERS_RAW = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github.raw"}
+HEADERS_JSON = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github+json"}
+HEADERS_CONTENTS_RAW = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github.raw"}
+HEADERS_RAW_URL = {"Authorization": f"token {TOKEN}"}
 
 if not TOKEN or not REPO or not PRNUM:
     print(f"Missing env vars. "
@@ -29,7 +30,21 @@ def get_changed_files():
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
     data = r.json()
-    return [{"filename": f["filename"], "contents_url": f.get("contents_url") or f.get("raw_url")} for f in data]
+    return [
+        {"filename": f["filename"], "raw_url": f.get("raw_url"), "contents_url": f.get("contents_url")}
+        for f in data
+    ]
+
+def fetch_file_text(filemeta):
+    if filemeta.get("raw_url"):
+        r = requests.get(filemeta["raw_url"], headers=HEADERS_RAW_URL)
+        if r.status_code < 400:
+            return r.text
+    if filemeta.get("contents_url"):
+        r = requests.get(filemeta["contents_url"], headers=HEADERS_CONTENTS_RAW)
+        r.raise_for_status()
+        return r.text
+    raise RuntimeError(f"No usable URL for {filemeta['filename']}")
 
 def sha256(message):
     return hashlib.sha256(message.encode('utf-8')).hexdigest()
@@ -40,13 +55,14 @@ def verify_submission():
     
     for f in files:
         try:
-            filename = f["filename"]
-            r = requests.get(f["contents_url"], headers=HEADERS_RAW)
-            r.raise_for_status()
-            content = r.text.strip()
+            content = fetch_file_text(f).strip()
+            parts = content.split(":", 1)
+            if len(parts) != 2:
+                raise ValueError("Expected '<hash>:<nonce>'")
+            submitted_hash, nonce = parts[0].strip(), parts[1].strip()
+
             question_id = int(filename.split("_q")[1].split(".txt")[0])
-            submitted_hash, nonce = content.split(':')
-        except (requests.RequestException, ValueError, KeyError):
+        except (requests.RequestException, ValueError, KeyError, IndexError) as e:
             print(f"Error: Could not read or parse the submission file: {filename}")
             sys.exit(1)
 
