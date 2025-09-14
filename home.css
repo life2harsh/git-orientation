@@ -1,0 +1,133 @@
+body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #000;
+      color: #fff;
+    }
+    .app-container {
+      min-height: 100vh;
+      background: url('c0b219f9-db37-482e-b398-8fcc6439951d.png') no-repeat center/cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+    .circle-wrapper {
+      position: relative;
+      width: 900px;
+      height: 900px;
+      margin: auto;
+    }
+    .partition-div {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid #ffd70050;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffd700;
+      font-size: 0.8rem;
+      text-shadow: 0 0 5px #000;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      user-select: none;
+    }
+    .partition-div:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #ffd700a0;
+      z-index: 10;
+    }
+    .header h1 {
+      font-size: 2rem;
+      color: #ffd700;
+      text-shadow: 0 0 15px #ff0000, 0 0 20px #00ffff;
+      margin-top: 1rem;
+    }
+    .header p {
+      color: #ddd;
+      margin-bottom: 1.5rem;
+    }
+    .btn-primary {
+      margin-top: 1rem;
+      padding: 0.7rem 1.2rem;
+      background: #ffd700;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ffd70090;
+      transition: transform 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: scale(1.05);
+    }
+    .circular-text text {
+      fill: #ffd700;
+      filter: drop-shadow(0 0 8px #ffd700)
+        drop-shadow(0 0 15px #ff0000)
+        drop-shadow(0 0 20px #00ffff);
+    }
+   .about-nodes {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  top: 455px;
+  left: 70px;
+  pointer-events: auto;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.partition-div.about:hover + .about-nodes {
+  opacity: 1;
+}
+
+.icon-node {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #ffd700;
+  border-radius: 50%;
+  color: #000;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 0 8px #ffd700;
+  transition: background 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  top: 50%;
+  left: 50%;
+  transform-origin: 20px 20px;
+}
+
+.icon-node.github {
+  transform: rotate(0deg) translate(60px) rotate(-0deg);
+}
+
+.icon-node.instagram {
+  transform: rotate(120deg) translate(60px) rotate(-120deg);
+}
+
+.icon-node.discord {
+  transform: rotate(240deg) translate(60px) rotate(-240deg);
+}
+
+.icon-node:hover {
+  background: #fff700;
+  transform: scale(1.2);
+}
