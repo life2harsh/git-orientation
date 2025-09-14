@@ -14,10 +14,8 @@ jobs:
       contents: read
     
     steps:
-      - name: Checkout PR code
+      - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Python
         uses: actions/setup-python@v6
