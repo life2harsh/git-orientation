@@ -25,11 +25,20 @@ jobs:
           repository: ${{ github.event.workflow_run.head_repository.full_name }}
           ref: ${{ github.event.workflow_run.head_branch }}
           fetch-depth: 0
+          
+      - name: Get PR number from triggering run's head SHA
+        id: pr
+        env:
+          REPO: ${{ github.repository }}
+          SHA:  ${{ github.event.workflow_run.head_sha }}
+        run: |
+          PR=$(gh api repos/$REPO/commits/$SHA/pulls --jq '.[0].number')
+          echo "PR=$PR"
+          echo "pr=$PR" >> "$GITHUB_OUTPUT"
 
       - name: Capture PR metadata
         run: |
-          echo "PR_NUMBER=${{ github.event.workflow_run.pull_requests[0].number }}" >> $GITHUB_ENV
-          echo "GITHUB_PR_NUMBER=${{ github.event.workflow_run.pull_requests[0].number }}" >> $GITHUB_ENV
+          echo "GITHUB_PR_NUMBER=${{ steps.pr.outputs.pr }}" >> "$GITHUB_ENV"
           echo "HEAD_SHA=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
           echo "GITHUB_HEAD_REF=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
 
