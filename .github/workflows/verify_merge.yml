@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: read
     env:
       GITHUB_TOKEN: ${{ github.token }}
 
@@ -25,23 +26,21 @@ jobs:
           repository: ${{ github.event.workflow_run.head_repository.full_name }}
           ref: ${{ github.event.workflow_run.head_branch }}
           fetch-depth: 0
-          
-      - name: Get PR number from triggering run's head SHA
-        id: pr
-        env:
-          REPO: ${{ github.repository }}
-          SHA:  ${{ github.event.workflow_run.head_sha }}
-        run: |
-          PR=$(gh api repos/$REPO/commits/$SHA/pulls --jq '.[0].number')
-          echo "PR=$PR"
-          echo "pr=$PR" >> "$GITHUB_OUTPUT"
 
-      - name: Capture PR metadata
+      - name: Download PR context from triggering run
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-context
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+          
+      - name: Export PR_NUMBER env
         run: |
-          echo "GITHUB_PR_NUMBER=${{ steps.pr.outputs.pr }}" >> "$GITHUB_ENV"
+          PR_NUMBER=$(jq -r .number pr-context.json)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "GITHUB_PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "HEAD_SHA=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
           echo "GITHUB_HEAD_REF=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -60,7 +59,7 @@ jobs:
                -H "Accept: application/vnd.github+json" \
                --request POST \
                --data "{\"body\": \"Your submission is incorrect. Please review and submit again.\"}" \
-               "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+               "https://api.github.com/repos/${{ github.repository }}/issues/${GITHUB_PR_NUMBER}/comments"
 
       - name: Close the PR
         if: failure()
@@ -69,18 +68,18 @@ jobs:
                -H "Accept: application/vnd.github+json" \
                --request PATCH \
                --data '{"state":"closed"}' \
-               "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}"
+               "https://api.github.com/repos/${{ github.repository }}/pulls/${GITHUB_PR_NUMBER}"
 
       - name: Auto-merge PR
         if: success()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge "$PR_NUMBER" \
+          gh pr merge "$GITHUB_PR_NUMBER" \
             --squash \
             --delete-branch \
             --repo "${{ github.repository }}" \
             --match-head-commit "$HEAD_SHA" \
             --auto
-          echo "PR #$PR_NUMBER queued for auto-merge."
+          echo "PR #$GITHUB_PR_NUMBER queued for auto-merge."
 

@@ -10,17 +10,24 @@ PRNUM = os.getenv("GITHUB_PR_NUMBER")
 
 HEADERS = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github+json"}
 
+if not TOKEN or not REPO or not PRNUM:
+    print(f"Missing env vars. "
+          f"GITHUB_TOKEN set? {bool(TOKEN)} "
+          f"GITHUB_REPOSITORY={REPO!r} "
+          f"GITHUB_PR_NUMBER={PRNUM!r}")
+    sys.exit(1)
+
 def get_pr_author():
     url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}"
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
-    return r.json()["user"]["login"].lower()
+    return r.json()["user"]["login"]
 
 def get_changed_files():
     url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}/files?per_page=100"
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
-    return [f["filename"].lower() for f in r.json()]
+    return [f["filename"] for f in r.json()]
 
 def sha256(message):
     return hashlib.sha256(message.encode('utf-8')).hexdigest()
