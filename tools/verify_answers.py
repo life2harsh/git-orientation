@@ -26,11 +26,6 @@ def sha256(message):
     return hashlib.sha256(message.encode('utf-8')).hexdigest()
 
 def verify_submission():
-    branch_name = os.getenv('GITHUB_HEAD_REF')
-    if not branch_name:
-        print("Error: Could not determine branch name.")
-        sys.exit(1)
-
     user  = get_pr_author()
     files = get_changed_files()
     
