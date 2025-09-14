@@ -21,13 +21,13 @@ if not TOKEN or not REPO or not PRNUM:
 
 def get_pr_author():
     url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}"
-    r = requests.get(url, headers=HEADERS)
+    r = requests.get(url, headers=HEADERS_JSON)
     r.raise_for_status()
     return r.json()["user"]["login"]
 
 def get_changed_files():
     url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}/files?per_page=100"
-    r = requests.get(url, headers=HEADERS)
+    r = requests.get(url, headers=HEADERS_JSON)
     r.raise_for_status()
     data = r.json()
     return [
@@ -54,6 +54,7 @@ def verify_submission():
     files = get_changed_files()
     
     for f in files:
+        filename = f["filename"]
         try:
             content = fetch_file_text(f).strip()
             parts = content.split(":", 1)
@@ -63,7 +64,7 @@ def verify_submission():
 
             question_id = int(filename.split("_q")[1].split(".txt")[0])
         except (requests.RequestException, ValueError, KeyError, IndexError) as e:
-            print(f"Error: Could not read or parse the submission file: {filename}")
+            print(f"Error: Could not read or parse the submission file: {filename}({e})")
             sys.exit(1)
 
         answers_json = os.getenv('CORRECT_ANSWERS_JSON')
