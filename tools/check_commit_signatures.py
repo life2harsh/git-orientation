@@ -34,6 +34,7 @@ def check_commit_signatures(commits):
         if (
             verification_payload is not None
             and "committer GitHub <noreply@github.com>" in verification_payload
+            and "Merge pull request #" not in verification_payload
         ):
             return False
 
