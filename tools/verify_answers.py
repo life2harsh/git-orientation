@@ -9,6 +9,7 @@ REPO  = os.getenv("GITHUB_REPOSITORY")
 PRNUM = os.getenv("GITHUB_PR_NUMBER")
 
 HEADERS = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github+json"}
+HEADERS_RAW = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github.raw"}
 
 if not TOKEN or not REPO or not PRNUM:
     print(f"Missing env vars. "
@@ -27,7 +28,8 @@ def get_changed_files():
     url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}/files?per_page=100"
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
-    return [f["filename"] for f in r.json()]
+    data = r.json()
+    return [{"filename": f["filename"], "contents_url": f.get("contents_url") or f.get("raw_url")} for f in data]
 
 def sha256(message):
     return hashlib.sha256(message.encode('utf-8')).hexdigest()
@@ -36,14 +38,15 @@ def verify_submission():
     user  = get_pr_author()
     files = get_changed_files()
     
-    for path in files:
+    for f in files:
         try:
-            filename = path
-            with open(filename, 'r', encoding='utf-8') as fh:
-                content = fh.read().strip()
-                question_id = int(filename.split("_q")[1].split(".txt")[0])
+            filename = f["filename"]
+            r = requests.get(f["contents_url"], headers=HEADERS_RAW)
+            r.raise_for_status()
+            content = r.text.strip()
+            question_id = int(filename.split("_q")[1].split(".txt")[0])
             submitted_hash, nonce = content.split(':')
-        except (FileNotFoundError, ValueError):
+        except (requests.RequestException, ValueError, KeyError):
             print(f"Error: Could not read or parse the submission file: {filename}")
             sys.exit(1)
 
