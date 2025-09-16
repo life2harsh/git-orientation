@@ -2,7 +2,7 @@ import os, re, json, subprocess
 from collections import defaultdict
 
 BASE_DIR    = os.environ.get("BASE_DIR", "submissions")
-OUTPUT_JSON = os.environ.get("OUTPUT_JSON", "scores.json")
+OUTPUT_JSON = "/tmp/scores.json"
 DECAY       = float(os.environ.get("BONUS_DECAY", "0.5"))
 REV         = os.environ.get("ANALYZE_REV", "HEAD")
 
