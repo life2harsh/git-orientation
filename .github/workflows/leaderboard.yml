@@ -38,6 +38,7 @@ jobs:
         run: |
           git fetch origin "$TARGET_BRANCH"
           git checkout "$TARGET_BRANCH"
+          mv /tmp/scores.json "$OUTPUT_JSON"
 
       - name: Commit JSON
         run: |
