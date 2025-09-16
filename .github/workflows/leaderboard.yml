@@ -1,0 +1,52 @@
+name: Make Leaderboard
+
+on:
+  workflow_run:
+    workflows: ["Verify and Merge Submission"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  make_leaderboard:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: leaderboard
+      OUTPUT_JSON: scores.json
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Find scores
+        run: python tools/leaderboard.py
+
+      - name: Configure Git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Switch to target branch
+        run: |
+          git fetch origin "$TARGET_BRANCH"
+          git checkout "$TARGET_BRANCH"
+
+      - name: Commit JSON
+        run: |
+          git add "$OUTPUT_JSON"
+          if ! git diff --cached --quiet; then
+            ts=$(TZ='Asia/Kolkata' date +"%Y-%m-%d %H:%M:%S IST")
+            git commit -m "chore: Updated Leaderboard ($ts)"
+            git push origin "$TARGET_BRANCH"
+          else
+            echo "No changes to commit."
+          fi
+
