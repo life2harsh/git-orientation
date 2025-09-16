@@ -14,7 +14,7 @@ else:
             count=0
             for ques in os.listdir(path):  
                 if os.path.isfile(os.path.join(path, ques)):
-                    count++
+                    count+=1
             scores[users] = count
 
 with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
