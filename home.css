@@ -6,7 +6,6 @@ body {
     }
     .app-container {
       min-height: 100vh;
-      background: url('c0b219f9-db37-482e-b398-8fcc6439951d.png') no-repeat center/cover;
       display: flex;
       flex-direction: column;
       align-items: center;
