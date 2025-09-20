@@ -28,26 +28,26 @@
     }
     .welcome {
       display: block;
-      color: #2f961d;
+      color: #ffd700;
       text-align: center;
       font-size: clamp(42px, 5vw, 46px);
       line-height: 1.4;
-      text-shadow: 0 0 3px #39ff14, 0 0 8px #39ff14, 0 0 2px #00ff00;
       user-select: none;
       padding: 20px;
       transition: opacity 1s ease-in-out;
     }
 .slide {
   display: none;
-  color: #2f961d;
   text-align: center;
   font-size: clamp(22px, 3vw, 32px); 
   line-height: 1.6;
   max-width: 900px;
   padding: 20px;
-  text-shadow: 0 0 2px #39ff14, 0 0 6px #39ff14, 0 0 1px #00ff00;
   user-select: none;
   animation: fadeIn 1s ease-in forwards;
+   color: #39ff14; 
+  font-weight: normal;
+
 }
 
     .buttons {
@@ -115,9 +115,8 @@
     .output { color: #888; font-style: italic; }
 
     .highlight {
-      color: #cfe30b;
-      text-shadow: 0 0 8px #cfe30b;
-      font-weight: bold;
+      color: #ffd700; /* remove yellow highlight */
+  font-weight: normal;
     }
 
     @media (max-width: 768px) {
