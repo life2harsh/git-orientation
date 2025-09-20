@@ -1,10 +1,8 @@
 name: Check Author
-
 on:
-  pull_request_target:
-    types: [opened, synchronize]
-    paths:
-      - 'submissions/**'
+  workflow_run:
+    workflows: ["Check Commit Signatures"]
+    types: [completed]
 
 jobs:
   check_authors:
@@ -17,20 +15,26 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Download PR context from triggering run
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-context
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+          
+      - name: Export PR_NUMBER env
+        run: |
+          PR_NUMBER=$(jq -r .number pr-context.json)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "GITHUB_PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "HEAD_SHA=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
+          echo "GITHUB_HEAD_REF=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.13'
       - run: pip install requests
-
-      - name: Save PR context
-        run: |
-          jq -n --arg n "${{ github.event.pull_request.number }}" \
-                --arg r "${{ github.repository }}" \
-                --arg s "${{ github.sha }}" \
-                --arg hr "${{ github.event.pull_request.head.repo.full_name }}" \
-                --arg hb "${{ github.event.pull_request.head.ref }}" \
-                '{number:$n|tonumber, repository:$r, head_sha:$s, head_repo:$hr, head_branch:$hb}' > pr-context.json
 
       - name: Upload PR context
         uses: actions/upload-artifact@v4
@@ -42,7 +46,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: python tools/validate_pr_paths.py 
 
       - name: Notify PR about invalid file edits
