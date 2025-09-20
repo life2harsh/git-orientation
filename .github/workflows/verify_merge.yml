@@ -70,7 +70,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh pr merge "$GITHUB_PR_NUMBER" \
-            --squash \
             --delete-branch \
             --repo "${{ github.repository }}" \
             --match-head-commit "$HEAD_SHA" \
