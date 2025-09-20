@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to OSDC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: black;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      flex-direction: column;
+      font-family: 'Creepster', cursive;
+    }
+
+    .logo {
+      width: 150px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 8px #39ff14);
+    }
+    .welcome {
+      display: block;
+      color: #2f961d;
+      text-align: center;
+      font-size: clamp(42px, 5vw, 46px);
+      line-height: 1.4;
+      text-shadow: 0 0 3px #39ff14, 0 0 8px #39ff14, 0 0 2px #00ff00;
+      user-select: none;
+      padding: 20px;
+      transition: opacity 1s ease-in-out;
+    }
+.slide {
+  display: none;
+  color: #2f961d;
+  text-align: center;
+  font-size: clamp(22px, 3vw, 32px); 
+  line-height: 1.6;
+  max-width: 900px;
+  padding: 20px;
+  text-shadow: 0 0 2px #39ff14, 0 0 6px #39ff14, 0 0 1px #00ff00;
+  user-select: none;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+    .buttons {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 10px 25px;
+      background: transparent;
+      border: 2px solid #39ff14;
+      color: #2f961d;
+      font-size: clamp(16px, 2vw, 20px);
+      cursor: pointer;
+      border-radius: 8px;
+      text-shadow: 0 0 2px #39ff14, 0 0 4px #39ff14;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #337826;
+      color: black;
+      text-shadow: 0 0 6px #39ff14, 0 0 12px #39ff14;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #billy {
+      display: none;
+      position: fixed;
+      bottom: 5px;
+      right: 0;
+      width: 350px;
+      filter: brightness(1.6) contrast(1.3) drop-shadow(0 0 12px #39ff14) drop-shadow(0 0 24px #39ff14);
+      animation: pulseGlow 2.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      from { filter: brightness(1.4) contrast(1.2) drop-shadow(0 0 8px #39ff14) drop-shadow(0 0 16px #39ff14); }
+      to   { filter: brightness(1.8) contrast(1.4) drop-shadow(0 0 16px #39ff14) drop-shadow(0 0 32px #39ff14); }
+    }
+
+    .terminal {
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid #39ff14;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px auto;
+      text-align: left;
+      font-family: monospace;
+      color: #2f961d;
+      font-size: clamp(14px, 1.5vw, 18px);
+      width: 80%;
+      max-width: 700px;
+      box-shadow: 0 0 8px #2f961d, 0 0 16px #00ff00;
+    }
+    .terminal p { margin: 8px 0; }
+    .prompt { color: #00ffcc; }
+    .command { color: #2f961d; }
+    .output { color: #888; font-style: italic; }
+
+    .highlight {
+      color: #cfe30b;
+      text-shadow: 0 0 8px #cfe30b;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      #billy { width: 200px; }
+      .welcome { font-size: clamp(24px, 5vw, 36px); }
+      .slide { font-size: clamp(16px, 2vw, 22px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="welcome">
+    <img src="./assets/Open_Source_Initiative.svg" alt="OSDC Logo" class="logo">
+    <p>WELCOME, MORTALS...</p>
+    <p>BILL CIPHER HERE TO UNVEIL THE SECRETS OF <span style="font-size: clamp(40px, 6vw, 55px);">OSDC</span>!</p>
+  </div>
+
+  <img src="./assets/bg.png" alt="Bill Cipher" id="billy">
+
+  <div class="slide" id="slide1">
+    <p>“Well, well, well… looks like you kids want to know about <span class="highlight">OPEN SOURCE</span>.”</p>
+    <p>I’m BILL CIPHER — all-seeing, all-knowing, and today... YOUR TEACHER.</p>
+    <p>OPEN SOURCE is like PIZZA 🍕.<br>
+    CLOSED-SOURCE? You only eat what you’re given.<br>
+    OPEN SOURCE? You’ve got the recipe — add cheese, jalapeños, or even pineapple if you’re that chaotic.</p>
+    <div class="buttons">
+      <button class="btn" onclick="nextSlide(2)">Next →</button>
+    </div>
+  </div>
+
+  <div class="slide" id="slide2">
+    <p>This is COLLABORATION. This is CHAOS. This is PURE CODE MAGIC. ✨</p>
+    <p>The WORLD runs on it — apps, games, even those BIG SCARY CORPORATIONS.</p>
+    <p>Reality is an illusion, but <span class="highlight">OPEN SOURCE</span> is forever.</p>
+    <p>So don’t just consume someone else’s code — <br>BREAK IT, FIX IT, REMIX IT.</p>
+    <p>Code is POWER. And power is meant to be FORKED.</p>
+    <div class="buttons">
+      <button class="btn" onclick="nextSlide(1)">← Back</button>
+      <button class="btn" onclick="nextSlide(3)">Next →</button>
+    </div>
+  </div>
+
+  <div class="slide" id="slide3">
+    <p>“So, you’ve been writing code, huh? But what happens when you <span class="highlight">MESS IT UP</span>?”</p>
+    <p><span class="highlight">GIT</span> is your personal TIME MACHINE.</p>
+    <div class="terminal">
+      <p><span class="prompt">$</span> <span class="command">git init</span></p>
+      <p class="output">✨ Created a new timeline (repository)</p>
+      <p><span class="prompt">$</span> <span class="command">git add .</span></p>
+      <p class="output">📦 Staging your chaos...</p>
+      <p><span class="prompt">$</span> <span class="command">git commit -m "First spell"</span></p>
+      <p class="output">🪄 Reality saved forever!</p>
+    </div>
+    <div class="buttons">
+      <button class="btn" onclick="nextSlide(2)">← Back</button>
+      <button class="btn" onclick="nextSlide(4)">Next →</button>
+    </div>
+  </div>
+
+<div class="slide" id="slide4">
+  <img src="./assets/github.png" alt="GitHub Logo" class="logo">
+  <p>“Welcome to <span class="highlight">GITHUB</span> — the social network for coders, the home of open source collaboration!”</p>
+  <p>Here, you <span class="highlight">push</span> your code, <span class="highlight">fork</span> others’ projects, and raise <span class="highlight">issues</span> (or just spot bugs ).</p>
+  <p>Branching? That's teamwork at its peak:<br>
+     <span class="highlight">BRANCH</span> into possibilities.<br>
+     <span class="highlight">MERGE</span> your universes.</p>
+  <p>Together, you build, break, and <span class="highlight">improve reality</span> — all on one magical platform. <br><br>
+     <span class="highlight">GITHUB</span>: Where code comes alive with the power of open source.”</p>
+  <div class="buttons">
+    <button class="btn" onclick="nextSlide(3)">← Back</button>
+  </div>
+</div>
+
+
+  <script>
+    setTimeout(() => {
+      document.querySelector('.welcome').style.opacity = 0;
+      setTimeout(() => {
+        document.querySelector('.welcome').style.display = 'none';
+        document.getElementById('slide1').style.display = 'block';
+        document.getElementById('billy').style.display = 'block';
+      }, 1000);
+    }, 3000);
+
+    function nextSlide(n) {
+      document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
+      document.getElementById('slide' + n).style.display = 'block';
+    }
+  </script>
+</body>
+</html>
