@@ -47,7 +47,7 @@
       }
     });
 
-    const questionDiv = document.querySelector('.partition-div.questions'); // Adjust class as per your markup
+    const questionDiv = document.querySelector('.partition-div.questions');
 
 if (questionDiv) {
   questionDiv.addEventListener('click', () => {
