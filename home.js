@@ -47,10 +47,16 @@
       }
     });
 
-    const questionDiv = document.querySelector('.partition-div.questions');
-
+    const questionDiv = document.querySelector('.partition-div.questions'); // Adjust class as per your markup
+    const introDic=document.querySelector('.about');
 if (questionDiv) {
   questionDiv.addEventListener('click', () => {
-    window.location.href = 'index.html';
+    window.location.href = 'questions.html';
+  });
+}
+
+if (introDic) {
+  introDic.addEventListener('click', () => {
+    window.location.href = 'about.html';
   });
 }

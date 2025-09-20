@@ -2,300 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Matrix Terminal</title>
-  <style>
-    html, body { margin:0; padding:0; height:100%; background:#000; }
-    body {
-      min-height:720px; display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(circle at 50% 20%, #002a2a, #000);
-    }
-    .crt-layout { display:flex; align-items:center; gap:16px; }
-    .crt-wrap {
-      position:relative; padding:0 10px 20px; border-radius:40px;
-      box-shadow:0 0 50px 50px #000; background:#000; display:inline-block;
-    }
-    #crt-canvas { display:block; pointer-events:auto; cursor:default; }
-
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Book of Bill</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="home.css" />
 </head>
 <body>
-  <div class="crt-layout">
-    <div class="crt-wrap">
-      <canvas id="crt-canvas" width="960" height="720"></canvas>
+  <div class="app-container" id="app">
+    <div class="header">
+      <div class="circle-wrapper">
+        <svg width="900" height="900" viewBox="0 0 900 900" style="position:absolute; top:0; left:0" aria-hidden="true" focusable="false">
+          <defs>
+            <path id="outer-text-path" d="
+              M 450,10                                                                                                                                                                                                                                        
+              a 430,430 0 1,1 0,860
+              a 430,430 0 1,1 0,-860
+            " />
+          </defs>
+          <circle cx="450" cy="450" r="380" stroke="#ffd700" stroke-width="6" fill="none" />
+          <circle cx="450" cy="450" r="250" stroke="#ffd700" stroke-width="6" fill="none" />
+          <g stroke="#ffd700" stroke-width="3">
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(0,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(72,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(144,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(216,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(288,450,450)" />
+          </g>
+          <g id="rotating-text">
+            <text font-size="32" letter-spacing="10" dominant-baseline="middle" fill="#ffd700">
+              <textPath startOffset="0%" href="#outer-text-path">
+                • Bill sees everything • Reality is an illusion • Trust no one • Open source unlocks the code • Pizza for all
+              </textPath>
+            </text>
+          </g>
+          <image href="assets/bill.png" x="320" y="270" width="280" height="400" style="filter: drop-shadow(0 0 10px #ffd700)" alt="Bill Cipher" role="img"/>
+          <ellipse cx="457" cy="450" rx="18" ry="14" fill="white" pointer-events="none" />
+          <circle id="pupil" cx="457" cy="450" r="8" fill="black" pointer-events="none" />
+        </svg>
+
+        <div class="partition-div questions" style="top: 160px; left: 220px">questions</div>
+        <div class="partition-div guide" style="top: 165px; left: 610px">guide</div>
+        <div class="partition-div osdc" style="top: 490px; left: 720px">osdc</div>
+        <div class="partition-div result" style="top: 720px; left: 420px">leaderboard</div>
+        <div class="partition-div about" style="top: 495px; left: 110px">about</div>
+
+        <div class="about-nodes">
+          <a href="https://discord.gg/bujDdu9u" target="_blank" class="icon-node" title="GitHub">GH</a>
+          <a href="https://instagram.com" target="_blank" class="icon-node" title="Instagram">IG</a>
+          <a href="https://discord.gg/bujDdu9u" target="_blank" class="icon-node" title="Discord">DC</a>
+        </div>
+      </div>
     </div>
   </div>
-
-  <script src="https://unpkg.com/regl@2.1.0/dist/regl.js"></script>
-  <script>
-
-    const hex2vec = h => { const s=h.replace('#',''); return [parseInt(s.slice(0,2),16)/255,parseInt(s.slice(2,4),16)/255,parseInt(s.slice(4,6),16)/255]; };
-    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-    const now=()=>performance.now();
-
-    const charW=6, charH=10, bufferCW=80, bufferCH=36; 
-    const bufferW=bufferCW*charW, bufferH=bufferCH*charH;
-    const textureW=512, textureH=512;
-
-    const bufferCanvas=document.createElement('canvas'); bufferCanvas.width=bufferW; bufferCanvas.height=bufferH; const ctx=bufferCanvas.getContext('2d');
-
-    const theCanvas = document.getElementById('crt-canvas');
-    let regl; let spriteTexture; let quad; let __fallback2D=false; let __view2dCtx=null;
-  const termFgColor = hex2vec('#00ff41');
-  const termBgColor = hex2vec('#000000');
-    try{
-      regl = createREGL({ canvas: theCanvas, attributes:{antialias:true,alpha:false,preserveDrawingBuffer:true} });
-      spriteTexture = regl.texture({ width:textureW, height:textureH, mag:'linear' });
-    }catch(err){
-      console.warn('REGL/CRT init failed, falling back to 2D', err);
-      __fallback2D = true;
-      __view2dCtx = theCanvas.getContext('2d');
-    }
-
-  if(!__fallback2D){
-  quad = regl({
-      vert:`precision mediump float; 
-attribute vec2 position; 
-varying vec2 uv; 
-void main(){ 
-  uv = position*vec2(0.5,-0.5)+vec2(0.5); 
-  gl_Position=vec4(position,0.0,1.0);
-}`,
-      frag:`precision mediump float;
-varying vec2 uv;
-uniform sampler2D sprite;
-uniform float time;
-uniform vec3 bgColor;
-uniform vec3 fgColor;
-#define textureW ${textureW+'.0'}
-#define textureH ${textureH+'.0'}
-#define consoleW ${bufferW+'.0'}
-#define consoleH ${bufferH+'.0'}
-void main(){
-  vec2 consoleWH=vec2(consoleW,consoleH);
-  float t=time;
-  float glitchLine=mod(0.8+t*0.07,1.0);
-  float flutter=mod(t*40.0,1.0);
-  float glitchAmt=0.06+flutter*0.01;
-  float glitchDist=0.04+flutter*0.15;
-  vec2 c=uv-0.5;
-  float f=dot(c,c)*0.2;
-  vec2 duv=uv+c*(1.0-f)*f;
-  vec2 fromEdge=0.5-abs(duv-0.5);
-  if(fromEdge.x>0.0 && fromEdge.y>0.0){
-    vec2 fromEdgePx=min(0.2*consoleWH*fromEdge, vec2(1.0));
-    vec2 inTex=mod(duv*consoleWH*0.5, vec2(1.0));
-    float distTo=glitchLine-(duv.y-inTex.y/consoleH);
-    float goL=step(0.0,distTo)*max(0.0,glitchDist-distTo)/glitchDist;
-    float go=goL*goL;
-    vec2 inOff=inTex-0.5;
-    float scan=inOff.y*inOff.y/0.25;
-    float intensity=8.0-scan*5.0+go*2.0;
-    vec2 uvAdj=inOff*vec2(0.0,0.5/consoleH);
-    duv.x -= go*glitchAmt + 0.011*(flutter*flutter*flutter);
-    vec4 src=texture2D(sprite,(duv-uvAdj)*consoleWH/vec2(textureW,textureH));
-    vec3 rgb=src.rgb*src.a;
-    float fade=1.0-dot(c,c)*1.8;
-    float edge=fromEdgePx.x*fromEdgePx.y;
-    gl_FragColor=vec4(edge*fade*mix(bgColor,fgColor,intensity*rgb+go*1.5)*(1.0-0.2*scan),0.2);
-  } else {
-    gl_FragColor=vec4(0.0,0.0,0.0,1.0);
-  }
-}`,
-      attributes:{ position: regl.buffer([[-1,-1],[1,-1],[-1,1],[1,1]]) },
-      uniforms:{ time: regl.context('time'), sprite: spriteTexture, bgColor: regl.prop('bg'), fgColor: regl.prop('fg') },
-      primitive:'triangle strip', count:4, depth:{ enable:false }, blend:{ enable:true, func:{ src:'src alpha', dst:'one minus src alpha' } }
-  });
-  }
-
-    const tetVerts = (()=>{ const pts=[[1,1,1],[1,-1,-1],[-1,1,-1],[-1,-1,1]]; return pts.map(([x,y,z])=>{ const L=Math.hypot(x,y,z); const s=0.9/L; return [x*s,y*s,z*s]; }); })();
-    const tetEdges=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
-    let tetAngle=0; const rotY=([x,y,z],a)=>{const c=Math.cos(a),s=Math.sin(a);return [c*x+s*z,y,-s*x+c*z];}; const rotX=([x,y,z],a)=>{const c=Math.cos(a),s=Math.sin(a);return [x,c*y-s*z,s*y+c*z];}; const proj=([x,y,z])=>{const f=1.4,dz=z+3.0,s=f/dz;return [x*s,y*s];};
-  function drawPyramid(dt){ tetAngle += dt*0.8; const pts = tetVerts.map(v => proj(rotX(rotY(v,tetAngle*1.1),tetAngle*0.6))); const cx=bufferW/2, cy=bufferH/2; ctx.save(); ctx.translate(cx, cy); ctx.scale(bufferH*0.35, bufferH*0.35); ctx.lineWidth = 1.5/(bufferH*0.35); ctx.strokeStyle='#00ff6b'; ctx.shadowColor='rgba(0,255,120,0.35)'; ctx.shadowBlur=8; ctx.beginPath(); tetEdges.forEach(([a,b])=>{ const pa=pts[a], pb=pts[b]; ctx.moveTo(pa[0],pa[1]); ctx.lineTo(pb[0],pb[1]); }); ctx.stroke(); ctx.restore(); }
-  function drawPyramidAt(x, y, scaleK, dt){ tetAngle += dt*0.8; const pts = tetVerts.map(v => proj(rotX(rotY(v,tetAngle*1.1),tetAngle*0.6))); ctx.save(); ctx.translate(x, y); const s = Math.max(1, bufferH*scaleK); ctx.scale(s, s); ctx.lineWidth = 1.5/s; ctx.strokeStyle='#00ff6b'; ctx.shadowColor='rgba(0,255,120,0.35)'; ctx.shadowBlur=8; ctx.beginPath(); tetEdges.forEach(([a,b])=>{ const pa=pts[a], pb=pts[b]; ctx.moveTo(pa[0],pa[1]); ctx.lineTo(pb[0],pb[1]); }); ctx.stroke(); ctx.restore(); }
-
-  const ui = { user:'', ans:'', output:'—', status:'', caretOn:true, qIndex:0, qHover:-1, hover:null };
-
-  const term = { state:'splash', revealIdx:0, revealSpeed:16, inputActive:false, inputBuffer:'', hashRevealIdx:0, hashText:'', scroll:0, scrollMax:0, scrollDrag:false, scrollGrabY:0, splashT:0 };
-
-    let qBtnsH = 0;
-    const L = { pad:12, lineH:16, termPad:10, get qBtnsRect(){ return { x:this.pad, y:this.pad, w:bufferW - this.pad*2, h:qBtnsH || 30 }; }, get termRect(){ const qb=this.qBtnsRect; const gap=10; return { x:this.pad, y:qb.y+qb.h+gap, w:bufferW - this.pad*2, h: bufferH - (qb.y+qb.h+gap) - this.pad }; } };
-    const innerRect = ()=>({ x:L.termRect.x + L.termPad, y:L.termRect.y + L.termPad, w:L.termRect.w - 2*L.termPad, h:L.termRect.h - 2*L.termPad });
-
-    function roundRect(r, rad=6, fill='rgba(0,18,0,0.72)', stroke='rgba(0,255,120,0.27)'){ const {x,y,w,h}=r; const rr=rad; ctx.beginPath(); ctx.moveTo(x+rr,y); ctx.arcTo(x+w,y,x+w,y+h,rr); ctx.arcTo(x+w,y+h,x,y+h,rr); ctx.arcTo(x,y+h,x,y,rr); ctx.arcTo(x,y,x+w,y,rr); ctx.closePath(); ctx.fillStyle=fill; ctx.fill(); ctx.lineWidth=1; ctx.strokeStyle=stroke; ctx.stroke(); }
-  function terminalFrame(r){ roundRect(r, 10, 'rgba(0,0,0,0.95)', 'rgba(0,255,120,0.22)'); }
-    function wrapText(s,x,y,maxW,lineH){ const words=String(s).split(/\s+/); let line=''; for(let i=0;i<words.length;i++){ const test=line?line+' '+words[i]:words[i]; if(ctx.measureText(test).width>maxW){ ctx.fillText(line,x,y); line=words[i]; y+=lineH; } else line=test; } ctx.fillText(line,x,y); }
-    function wrapMonoString(text, x0, y0, maxW, lineH){ let line=''; let y=y0; for(const ch of String(text)){ const test=line + ch; if(ctx.measureText(test).width>maxW){ ctx.fillText(line, x0, y); y+=lineH; line=ch; } else line=test; } ctx.fillText(line, x0, y); return y; }
-
-    function drawScrollbar(){ const ir=innerRect(); const barW=10; const track={ x: ir.x + ir.w + 6, y: ir.y, w: barW, h: ir.h }; roundRect({x:track.x-4,y:track.y-4,w:track.w+8,h:track.h+8},6,'rgba(0,10,0,0.65)','rgba(0,255,120,0.18)'); roundRect(track,4,'rgba(0,26,0,0.65)','rgba(0,255,120,0.18)'); const minKnobH=24; const ratio = ir.h / Math.max(ir.h, term.scrollMax + ir.h); const knobH=Math.max(minKnobH, Math.floor(ratio*track.h)); const travel=track.h - knobH; const pos = term.scrollMax>0 ? (term.scroll/term.scrollMax) : 0; const knobY=track.y + Math.floor(travel*pos); const knob={ x:track.x+1, y:knobY, w:track.w-2, h:knobH }; roundRect(knob,4,'rgba(0,60,30,0.95)','#19f07b'); ctx.save(); ctx.strokeStyle='rgba(150,255,200,0.25)'; ctx.lineWidth=1; for(let i=1;i<3;i++){ const gy=knob.y + Math.floor((i*knob.h)/3); ctx.beginPath(); ctx.moveTo(knob.x+3,gy); ctx.lineTo(knob.x+knob.w-3,gy); ctx.stroke(); } ctx.restore(); term._scrollbar={ track, knob }; }
-
-    let qBtnRects = [];
-    function layoutQButtons(){
-      const count=Array.isArray(window.__questions)?window.__questions.length:0;
-      qBtnRects=[]; if(!count){ qBtnsH=0; return; }
-      const padX=10, padY=8, btnH=22, gap=8; const maxW=bufferW - L.pad*2 - padX*2;
-      ctx.save(); ctx.font='12px Inconsolata, monospace';
-      let x=L.pad+padX, y=L.pad+padY;
-      for(let i=0;i<count;i++){
-        const labelTxt = 'Q'+String(i+1);
-        const tw = Math.ceil(ctx.measureText(labelTxt).width);
-        const w = Math.max(28, tw + 12);
-        if(x+w > L.pad+padX+maxW){ x=L.pad+padX; y+=btnH+gap; }
-        qBtnRects.push({x,y,w,h:btnH,index:i});
-        x+=w+gap;
-      }
-      ctx.restore();
-      const lastY=(qBtnRects.length ? qBtnRects[qBtnRects.length-1].y : y);
-      qBtnsH=(lastY - (L.pad+padY)) + (qBtnRects.length? qBtnRects[qBtnRects.length-1].h : btnH) + padY;
-    }
-    function drawQButtons(){
-      if(!qBtnRects.length) return;
-      roundRect(L.qBtnsRect,6,'rgba(0,18,0,0.56)','rgba(0,255,120,0.20)');
-      ctx.save(); ctx.font='12px Inconsolata, monospace';
-      for(const r of qBtnRects){
-        const active=(r.index===ui.qIndex), hot=(r.index===ui.qHover);
-        const fill= active? 'rgba(0,72,36,0.96)' : (hot? 'rgba(10,62,34,0.9)' : 'rgba(0,40,20,0.78)');
-        const stroke= active? '#22ff9a' : (hot? '#19f07b' : '#0aa85a');
-        roundRect(r,4,fill,stroke);
-        const labelTxt='Q'+String(r.index+1);
-        const tw=ctx.measureText(labelTxt).width;
-        ctx.fillStyle='#eaffef'; ctx.shadowColor='rgba(0,255,100,0.35)'; ctx.shadowBlur=5;
-        ctx.fillText(labelTxt, r.x+(r.w-tw)/2, r.y+r.h-6);
-      }
-      ctx.restore();
-    }
-
-    let loadingAnim=0, loadingTarget=null; function startLoadingTransition(newIdx){ if(newIdx===ui.qIndex) return; loadingAnim=1.0; loadingTarget=newIdx; }
-
-  const canvas = theCanvas;
-    const toBuf=(e)=>{ const r=canvas.getBoundingClientRect(); return { x:(e.clientX-r.left)*(bufferW/canvas.width), y:(e.clientY-r.top)*(bufferH/canvas.height) }; };
-    const ptIn=(r,p)=> p.x>=r.x && p.x<=r.x+r.w && p.y>=r.y && p.y<=r.y+r.h;
-
-    async function generateHash(){ try{ let out; if(window.GitWorkshop && typeof window.GitWorkshop.generateFinalHash === 'function'){ out=await window.GitWorkshop.generateFinalHash(ui.user.trim(), ui.ans.trim()); } else if(window.crypto?.subtle){ const enc=new TextEncoder(); const buf=await crypto.subtle.digest('SHA-256', enc.encode(ui.user.trim()+':'+ui.ans.trim())); out=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); } else { out=ui.user.trim()+':'+ui.ans.trim(); } const textOut=(out && typeof out==='object' && 'output' in out)? out.output : (out || '—'); ui.output=textOut; ui.status='hash generated'; return textOut; } catch(e){ ui.status='hash error'; console.error(e); return '—'; } }
-    async function copyOutput(){ try{ await navigator.clipboard.writeText(String(ui.output||'')); ui.status='copied'; } catch{ ui.status='copy failed'; } }
-    window.copyOutput = copyOutput;
-
-  let copyBtnRect=null; let copyBtnHot=false;
-  canvas.addEventListener('mousemove', e=>{ const p=toBuf(e); layoutQButtons(); ui.qHover=-1; if(term.state!=='splash'){ for(const r of qBtnRects){ if(ptIn(r,p)){ ui.qHover=r.index; break; } } } const ir=innerRect(); const overTerm=ptIn({x:ir.x,y:ir.y,w:ir.w+20,h:ir.h},p); const textMode=overTerm && (term.state==='promptUser' || term.state==='promptAnswer'); const overKnob = term._scrollbar && ptIn(term._scrollbar.knob, p); copyBtnHot = copyBtnRect ? ptIn(copyBtnRect,p) : false; const copyEnabled = (term.state==='showHash' || term.state==='done') && ui.output && ui.output!=='—'; const overCopy = copyEnabled && copyBtnHot; ui.hover = (ui.qHover!==-1) ? 'qbtn' : (overKnob ? 'scroll' : (overCopy ? 'copy' : null)); canvas.style.cursor = term.scrollDrag ? 'grabbing' : (textMode ? 'text' : (ui.hover==='scroll' ? 'grab' : (ui.hover==='copy' ? 'pointer' : (ui.hover ? 'pointer' : 'default')))); if(term.scrollDrag){ const { track, knob } = term._scrollbar || {}; if(track){ const clampedY = clamp(p.y - term.scrollGrabY, track.y, track.y + track.h - knob.h); const travel = track.h - knob.h; const pos = (clampedY - track.y) / (travel || 1); term.scroll = Math.round(pos * term.scrollMax); } } });
-    canvas.addEventListener('mousedown', e=>{ const p=toBuf(e); layoutQButtons();
-      if(copyBtnRect){ const enabled=(term.state==='showHash' || term.state==='done') && ui.output && ui.output!=='—'; if(enabled && ptIn(copyBtnRect,p)){ copyOutput(); return; } }
-      if(term.state!=='splash'){
-        for(const r of qBtnRects){ if(ptIn(r,p)){ startLoadingTransition(r.index); return; } }
-      }
-      const ir=innerRect(); const { track, knob } = term._scrollbar || {};
-      if(track && (ptIn(knob,p) || ptIn(track,p))){ term.scrollDrag=true; term.scrollGrabY=p.y - knob.y; return; }
-      if(ptIn(ir,p) && (term.state==='promptUser' || term.state==='promptAnswer')){ term.inputActive=true; } else { term.inputActive=false; }
-    });
-    window.addEventListener('mouseup', ()=>{ term.scrollDrag=false; });
-    canvas.addEventListener('wheel', e=>{ const p=toBuf(e); const ir=innerRect(); const over=ptIn({x:ir.x,y:ir.y,w:ir.w+20,h:ir.h},p); if(!over) return; e.preventDefault(); const delta=Math.sign(e.deltaY)*24; term.scroll=clamp(term.scroll + delta, 0, term.scrollMax); }, { passive:false });
-
-    window.addEventListener('keydown', async e=>{ if(!(term.state==='promptUser' || term.state==='promptAnswer')) return; if(!term.inputActive) return; const field = term.state==='promptUser' ? 'user' : 'ans'; if(e.key==='Backspace'){ term.inputBuffer=term.inputBuffer.slice(0,-1); e.preventDefault(); return; } if(e.key==='Enter'){ ui[field]=term.inputBuffer.trim(); term.inputBuffer=''; term.inputActive=false; if(field==='user'){ term.state='promptAnswer'; term.inputActive=true; } else { term.state='hashing'; const out=await generateHash(); term.hashRevealIdx=0; term.hashText=String(out||'—'); term.state='showHash'; } return; } if(e.key.length===1){ const c=e.key.charCodeAt(0); if(c>=32 && c<=126) term.inputBuffer+=e.key; } });
-
-    window.questionText='Loading questions...';
-    (function loadQuestions(){ if (window.GitWorkshop && typeof window.GitWorkshop.loadAndDecryptQuestions === 'function'){ window.GitWorkshop.loadAndDecryptQuestions().then(qs=>{ try{ if(Array.isArray(qs) && qs.length){ window.__questions=qs; setupQuestion(0); } else window.questionText='No questions found'; }catch(e){ window.questionText='Question parse error'; } }).catch(()=>{ window.questionText='Failed to load questions'; }); } else { setTimeout(loadQuestions, 500); } })();
-  function setupQuestion(idx){ ui.qIndex=idx|0; const q = Array.isArray(window.__questions) && window.__questions[ui.qIndex] || null; const text=(q && (q.question || q.text || q.title || JSON.stringify(q))) || String(window.questionText||'No question'); window.questionText=text; ui.user=''; ui.ans=''; ui.output='—'; ui.status=''; if(term.state!=='splash') term.state='showQuestion'; term.revealIdx=0; term.inputActive=false; term.inputBuffer=''; term.hashRevealIdx=0; term.hashText=''; term.scroll=0; term.scrollMax=0; }
-
-    let last=now(), fadeCountdown=0, caretTimer=0;
-    function frame(){
-      const t=now(); const dt=Math.min(0.05,(t-last)/1000); last=t;
-      fadeCountdown -= dt; if(fadeCountdown < 0){ ctx.fillStyle='rgba(0,20,0,0.9)'; ctx.fillRect(0,0,bufferW,bufferH); fadeCountdown += 0.06; }
-      caretTimer += dt; if(caretTimer>0.5){ ui.caretOn=!ui.caretOn; caretTimer=0; }
-
-  terminalFrame(L.termRect);
-  if(term.state!=='splash'){ layoutQButtons(); drawQButtons(); }
-
-      const ir=innerRect();
-
-      if(term.state==='splash'){
-        term.splashT += dt;
-        const center={x:ir.x+ir.w*0.5, y:ir.y+ir.h*0.5};
-
-        const dest={x:ir.x+ir.w*0.08, y:ir.y+ir.h*0.92};
-        const t0=1.2, t1=2.2;
-        let pos=center, scale=0.28, titleAlpha=1.0;
-        if(term.splashT < t0){ titleAlpha = Math.min(1, term.splashT/0.5); }
-        else if(term.splashT < t1){ const u=(term.splashT - t0)/(t1 - t0); const s=u*u*(3-2*u); pos={ x:center.x + (dest.x - center.x)*s, y:center.y + (dest.y - center.y)*s }; scale=0.36 + (0.18-0.36)*s; titleAlpha = 1.0 - s; }
-        else { pos=dest; scale=0.14; titleAlpha=0; term.state='showQuestion'; }
-        drawPyramidAt(pos.x, pos.y, scale, dt);
-        if(titleAlpha>0){ ctx.save(); ctx.globalAlpha=titleAlpha; ctx.font='28px Inconsolata, monospace'; ctx.fillStyle='#ccffe4'; ctx.shadowColor='rgba(0,255,120,0.25)'; ctx.shadowBlur=10; const label='MCGUCKET LABS'; const tw=ctx.measureText(label).width; ctx.fillText(label, ir.x+(ir.w-tw)/2, ir.y+ir.h*0.25); ctx.restore(); }
-      } else {
-        drawPyramidAt(ir.x+ir.w*0.08, ir.y+ir.h*0.92, 0.14, dt);
-      }
-
-      ctx.save(); ctx.beginPath(); ctx.rect(ir.x, ir.y, ir.w, ir.h); ctx.clip();
-  ctx.font='12px Inconsolata, monospace'; ctx.fillStyle='#9dffb3'; ctx.shadowColor='rgba(0,255,120,0.14)'; ctx.shadowBlur=2;
-  const tx=ir.x+6, ty0=ir.y+8; const tmaxW=ir.w-12; const lineH=14; let y=ty0 - term.scroll;
-      if(loadingAnim > 0){ const alpha=Math.abs(Math.cos(Math.PI*loadingAnim)); ctx.globalAlpha=0.3 + 0.7*alpha; }
-
-      const qAll=String(window.questionText||''); const qWords=qAll.split(/\s+/); if(term.state==='loading') term.state='showQuestion';
-      if(term.state!=='splash'){
-        if(term.state==='showQuestion'){ term.revealIdx += term.revealSpeed * dt; const shown=Math.floor(term.revealIdx); const shownText=qWords.slice(0, clamp(shown,0,qWords.length)).join(' '); wrapText(shownText, tx, y, tmaxW, lineH); if(shown>=qWords.length){ term.state='promptUser'; term.inputActive=true; } }
-        else { wrapText(qAll, tx, y, tmaxW, lineH); }
-      }
-      const measureWrapHeight=(s)=>{ const words=String(s).split(/\s+/); let line=''; let lines=1; for(let i=0;i<words.length;i++){ const test=line?line+' '+words[i]:words[i]; if(ctx.measureText(test).width>tmaxW){ line=words[i]; lines++; } else line=test; } return lines*lineH; };
-      y += measureWrapHeight(term.state==='showQuestion' ? qWords.slice(0, Math.min(qWords.length, Math.floor(term.revealIdx))).join(' ') : qAll) + 10;
-
-  if(term.state!=='splash' && (term.state==='promptUser' || term.state==='promptAnswer' || term.state==='hashing' || term.state==='showHash' || term.state==='done')){
-        ctx.fillStyle='#a8ffc6'; ctx.fillText('> GitHub username:', tx, y);
-        const ux = tx + ctx.measureText('> GitHub username: ').width; const uname=(term.state==='promptUser') ? term.inputBuffer : (ui.user||'');
-        ctx.fillStyle='#eaffef'; ctx.fillText(uname, ux, y);
-        if(term.state==='promptUser' && ui.caretOn){ const w=ctx.measureText(uname).width; ctx.beginPath(); ctx.moveTo(ux+w+1, y-12); ctx.lineTo(ux+w+1, y+4); ctx.strokeStyle='#9cffb3'; ctx.lineWidth=1; ctx.stroke(); }
-        y += lineH + 4;
-
-        ctx.fillStyle='#a8ffc6'; ctx.fillText('> Answer:', tx, y);
-        const ax = tx + ctx.measureText('> Answer: ').width; const answerShown=(term.state==='promptAnswer') ? term.inputBuffer : (ui.ans||''); ctx.fillStyle='#eaffef';
-        const drawInlineWrap=(text, x0, y0)=>{ const words=String(text).split(/\s+/); let line=''; let yy=y0; for(let i=0;i<words.length;i++){ const word=(line?line+' ':'') + words[i]; if(ctx.measureText(word).width > (tmaxW - (x0 - tx))){ ctx.fillText(line, x0, yy); yy+=lineH; line=words[i]; } else line=word; } ctx.fillText(line, x0, yy); return { lastY: yy, lastLineWidth: ctx.measureText(line).width }; };
-        const wrapRes = drawInlineWrap(answerShown, ax, y);
-        if(term.state==='promptAnswer' && ui.caretOn){ ctx.beginPath(); ctx.moveTo(ax + wrapRes.lastLineWidth + 1, wrapRes.lastY-12); ctx.lineTo(ax + wrapRes.lastLineWidth + 1, wrapRes.lastY+4); ctx.strokeStyle='#9cffb3'; ctx.lineWidth=1; ctx.stroke(); }
-        y = wrapRes.lastY + lineH + 6;
-
-        if(term.state==='showHash' || term.state==='done'){
-          ctx.fillStyle='#a8ffc6'; ctx.fillText('> Hash:', tx, y);
-          const hx = tx + ctx.measureText('> Hash: ').width;
-          if(term.state==='showHash'){ term.hashRevealIdx += 48 * dt; if(term.hashRevealIdx >= (term.hashText||'').length){ term.hashRevealIdx=(term.hashText||'').length; term.state='done'; } }
-          const shownHash=(term.hashText||'').slice(0, Math.floor(term.hashRevealIdx));
-          ctx.fillStyle='#eaffef'; wrapMonoString(shownHash, hx, y, tmaxW - (hx - tx), lineH);
-          const hashLines = Math.ceil(ctx.measureText(shownHash).width / Math.max(1, (tmaxW - (hx - tx))));
-          y += Math.max(lineH, hashLines*lineH);
-        }
-      }
-
-      const totalHeight = y - (ty0 - term.scroll);
-      term.scrollMax = Math.max(0, totalHeight - ir.h);
-      term.scroll = clamp(term.scroll, 0, term.scrollMax);
-
-  ctx.globalAlpha = 1.0; ctx.restore();
-
-      if(term.state!=='splash'){
-        drawScrollbar();
-
-        (function(){ const btnW=96, btnH=20; const x=ir.x+ir.w-btnW-4, y=ir.y+ir.h-btnH-4; copyBtnRect={x,y,w:btnW,h:btnH}; const enabled=(term.state==='showHash'||term.state==='done') && ui.output && ui.output!=='—'; const hover=copyBtnHot && enabled; const fill=enabled ? (hover?'rgba(8,70,36,0.95)':'rgba(6,48,28,0.9)') : 'rgba(8,8,8,0.5)'; const stroke=enabled ? (hover?'#29ff9a':'#18c67a') : 'rgba(80,120,90,0.6)'; roundRect(copyBtnRect,4,fill,stroke); ctx.save(); ctx.font='11px Inconsolata, monospace'; ctx.fillStyle=enabled ? '#d8ffe6' : '#7da08b'; const label='COPY HASH'; const tw=ctx.measureText(label).width; ctx.fillText(label, x+(btnW-tw)/2, y+btnH-5); ctx.restore(); })();
-      }
-
-      if(loadingAnim > 0){ loadingAnim -= dt*2.2; if(loadingAnim <= 0 && loadingTarget !== null){ setupQuestion(loadingTarget); loadingTarget = null; } }
-
-      if(ui.status){ ctx.save(); ctx.font='12px Inconsolata, monospace'; ctx.fillStyle='#caffd3'; ctx.shadowColor='rgba(0,255,120,0.18)'; ctx.shadowBlur=3; ctx.fillText(ui.status, L.termRect.x + 8, L.termRect.y + L.termRect.h - 8); ctx.restore(); }
-
-      if(__fallback2D){
-
-        const dc = canvas; const g = __view2dCtx; if(g){
-          g.save();
-          g.imageSmoothingEnabled = false;
-          g.clearRect(0,0,dc.width,dc.height);
-          const scale = Math.min(dc.width/bufferW, dc.height/bufferH);
-          const dw = Math.floor(bufferW*scale), dh = Math.floor(bufferH*scale);
-          const dx = Math.floor((dc.width - dw)/2), dy = Math.floor((dc.height - dh)/2);
-          g.drawImage(bufferCanvas, dx, dy, dw, dh);
-          g.restore();
-        }
-        requestAnimationFrame(frame);
-      } else {
-        regl.poll(); spriteTexture.subimage(bufferCanvas, 0, 0); quad({ bg: termBgColor, fg: termFgColor }); requestAnimationFrame(frame);
-      }
-    }
-    frame();
-  </script>
-  <script src="script.js"></script>
-  <script></script>
+  <script src="home.js"></script>
 </body>
 </html>

@@ -11,14 +11,14 @@ def get_pr_author():
     url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}"
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
-    return r.json()["user"]["login"].lower()
+    return r.json()["user"]["login"]
 
 
 def get_changed_files():
     url = f"https://api.github.com/repos/{REPO}/pulls/{PRNUM}/files?per_page=100"
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
-    return [f["filename"].lower() for f in r.json()]
+    return [f["filename"] for f in r.json()]
 
 
 # logic: check all files,segregate in ok n not_ok if there exists not_ok OR there exists 0 ok, it will fail.
