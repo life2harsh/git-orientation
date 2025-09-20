@@ -27,10 +27,12 @@ jobs:
         run: |
           jq -n --arg n "${{ github.event.pull_request.number }}" \
                 --arg r "${{ github.repository }}" \
-                --arg s "${{ github.sha }}" \
+                --arg s "${{ github.event.pull_request.head_sha }}" \
                 --arg hr "${{ github.event.pull_request.head.repo.full_name }}" \
                 --arg hb "${{ github.event.pull_request.head.ref }}" \
                 '{number:$n|tonumber, repository:$r, head_sha:$s, head_repo:$hr, head_branch:$hb}' > pr-context.json
+          echo "${{ github.event.pull_request.head_sha }}"
+          echo "${{ github.sha }}"
 
       - name: Upload PR context
         uses: actions/upload-artifact@v4

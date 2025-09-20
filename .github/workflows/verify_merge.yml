@@ -29,10 +29,12 @@ jobs:
       - name: Export PR_NUMBER env
         run: |
           PR_NUMBER=$(jq -r .number pr-context.json)
+          PR_HEAD=$(jq -r .head_sha pr-context.json)
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "GITHUB_PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-          echo "HEAD_SHA=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_ENV
+          echo "HEAD_SHA=$PR_HEAD" >> $GITHUB_ENV
           echo "GITHUB_HEAD_REF=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_ENV
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
