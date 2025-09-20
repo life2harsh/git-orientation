@@ -14,10 +14,8 @@ jobs:
       contents: read
     
     steps:
-      - name: Checkout PR code
+      - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -25,6 +23,22 @@ jobs:
           python-version: '3.13'
       - run: pip install requests
 
+      - name: Save PR context
+        run: |
+          jq -n --arg n "${{ github.event.pull_request.number }}" \
+                --arg r "${{ github.repository }}" \
+                --arg s "${{ github.event.pull_request.head_sha }}" \
+                --arg hr "${{ github.event.pull_request.head.repo.full_name }}" \
+                --arg hb "${{ github.event.pull_request.head.ref }}" \
+                '{number:$n|tonumber, repository:$r, head_sha:$s, head_repo:$hr, head_branch:$hb}' > pr-context.json
+          echo "${{ github.event.pull_request.head_sha }}"
+          echo "${{ github.sha }}"
+
+      - name: Upload PR context
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-context
+          path: pr-context.json
       - name: Check Commit Signatures for GitHub Web Usage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
