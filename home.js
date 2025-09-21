@@ -51,7 +51,7 @@
     const introDic=document.querySelector('.about');
 if (questionDiv) {
   questionDiv.addEventListener('click', () => {
-    window.location.href = 'index.html';
+    window.location.href = 'questions.html';
   });
 }
 

@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Welcome to OSDC</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet" />
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-style: url('./assets/gravity-falls/gravitation_falls.otf')
+      font-style: url('./assets/gravity-falls/gravitation_falls.otf');
     }
-
     body {
       background-color: black;
       margin: 0;
@@ -26,8 +23,6 @@
       overflow: hidden;
       flex-direction: column;
     }
-
-
     body::before {
       content: "";
       position: fixed;
@@ -42,46 +37,39 @@
       background-position: center;
       z-index: -1;
     }
-
     .logo {
       width: 150px;
       margin-bottom: 20px;
       filter: drop-shadow(0 0 8px #0e0e0e);
       border-radius: 50%;
     }
-
     .welcome {
-      display: block;
-      color: #28b210;
+      color: #ffd700;
       text-align: center;
       font-size: clamp(42px, 5vw, 46px);
       line-height: 1.4;
-      text-shadow: 0 0 3px #28b210, 0 0 8px #081406, 0 0 2px #00ff00;
       user-select: none;
       padding: 20px;
       transition: opacity 1s ease-in-out;
     }
-
     .slide {
       display: none;
-      color: #0af80a;
       text-align: center;
       font-size: clamp(22px, 3vw, 32px);
-      line-height: 1.4;
+      line-height: 1.6;
       max-width: 900px;
       padding: 20px;
-      text-shadow: 0 0 2px #31f50e, 0 0 6px #39ff14, 0 0 1px #00ff00;
       user-select: none;
       animation: fadeIn 1s ease-in forwards;
+      color: #39ff14;
+      font-weight: normal;
     }
-
     .buttons {
       margin-top: 2rem;
       display: flex;
       justify-content: center;
       gap: 20px;
     }
-
     .btn {
       padding: 10px 25px;
       background: transparent;
@@ -93,35 +81,21 @@
       text-shadow: 0 0 2px #39ff14, 0 0 4px #39ff14;
       transition: all 0.3s ease;
     }
-
     .btn:hover {
       background: #337826;
       color: black;
       text-shadow: 0 0 6px #39ff14, 0 0 12px #39ff14;
     }
-
     @keyframes fadeIn {
       from {
         opacity: 0;
         transform: scale(0.95);
       }
-
       to {
         opacity: 1;
         transform: scale(1);
       }
     }
-
-    @keyframes pulseGlow {
-      from {
-        filter: brightness(1.4) contrast(1.2) drop-shadow(0 0 8px #39ff14) drop-shadow(0 0 16px #39ff14);
-      }
-
-      to {
-        filter: brightness(1.8) contrast(1.4) drop-shadow(0 0 16px #39ff14) drop-shadow(0 0 32px #39ff14);
-      }
-    }
-
     .terminal {
       background: rgba(0, 0, 0, 0.85);
       border: 2px solid #39ff14;
@@ -136,39 +110,27 @@
       max-width: 700px;
       box-shadow: 0 0 8px #2f961d, 0 0 16px #00ff00;
     }
-
     .terminal p {
       margin: 8px 0;
     }
-
     .prompt {
       color: #00ffcc;
     }
-
     .command {
       color: #2f961d;
     }
-
     .output {
       color: #888;
       font-style: italic;
     }
-
     .highlight {
-      color: #cfe30b;
-      text-shadow: 0 0 8px #cfe30b;
-      font-weight: bold;
+      color: #ffd700;
+      font-weight: normal;
     }
-
     @media (max-width: 768px) {
-      #billy {
-        width: 200px;
-      }
-
       .welcome {
         font-size: clamp(24px, 5vw, 36px);
       }
-
       .slide {
         font-size: clamp(16px, 2vw, 22px);
       }
@@ -177,30 +139,29 @@
 </head>
 
 <body>
-
   <div class="welcome">
-    <img src="./assets/Open_Source_Initiative.svg" alt="OSDC Logo" class="logo">
+    <img src="./assets/Open_Source_Initiative.svg" alt="OSDC Logo" class="logo" />
     <p>WELCOME, MORTALS...</p>
     <p>BILL CIPHER HERE TO UNVEIL THE SECRETS OF <span style="font-size: clamp(40px, 6vw, 55px);">OSDC</span>!</p>
   </div>
 
-  <div class="slide typewriter" id="slide1">
+  <div class="slide" id="slide1">
     <p>“Well, well, well… looks like you kids want to know about <span class="highlight">OPEN SOURCE</span>.”</p>
     <p>I’m BILL CIPHER — all-seeing, all-knowing, and today...</p>
-    <p></p> YOUR TEACHER.</p>
-    <p>OPEN SOURCE is like PIZZA 🍕.<br>
-      CLOSED-SOURCE? You only eat what you’re given.<br>
+    <p>YOUR TEACHER.</p>
+    <p>OPEN SOURCE is like PIZZA 🍕.<br />
+      CLOSED-SOURCE? You only eat what you’re given.<br />
       OPEN SOURCE? You’ve got the recipe — add cheese, jalapeños, or even pineapple if you’re that chaotic.</p>
     <div class="buttons">
       <button class="btn" onclick="nextSlide(2)">Next →</button>
     </div>
   </div>
 
-  <div class="slide typewriter" id="slide2">
+  <div class="slide" id="slide2">
     <p>This is COLLABORATION. This is CHAOS. This is PURE CODE MAGIC. ✨</p>
     <p>The WORLD runs on it — apps, games, even those BIG SCARY CORPORATIONS.</p>
     <p>Reality is an illusion, but <span class="highlight">OPEN SOURCE</span> is forever.</p>
-    <p>So don’t just consume someone else’s code — <br>BREAK IT, FIX IT, REMIX IT.</p>
+    <p>So don’t just consume someone else’s code — <br />BREAK IT, FIX IT, REMIX IT.</p>
     <p>Code is POWER. And power is meant to be FORKED.</p>
     <div class="buttons">
       <button class="btn" onclick="nextSlide(1)">← Back</button>
@@ -208,7 +169,7 @@
     </div>
   </div>
 
-  <div class="slide typewriter" id="slide3">
+  <div class="slide" id="slide3">
     <p>“So, you’ve been writing code, huh? But what happens when you <span class="highlight">MESS IT UP</span>?”</p>
     <p><span class="highlight">GIT</span> is your personal TIME MACHINE.</p>
     <div class="terminal">
@@ -225,25 +186,19 @@
     </div>
   </div>
 
-  <div class="slide typewriter" id="slide4">
-    <img src="./assets/github.jpg" alt="GitHub Logo" class="logo">
-    <p>“Welcome to <span class="highlight">GITHUB</span> — the social network for coders, the home of open source
-      collaboration!”</p>
-    <p>Here, you <span class="highlight">push</span> your code, <span class="highlight">fork</span> others’ projects,
-      and raise <span class="highlight">issues</span> (or just spot bugs ).</p>
-    <p>Branching? That's teamwork at its peak:<br>
-      <span class="highlight">BRANCH</span> into possibilities.<br>
-      <span class="highlight">MERGE</span> your universes.
-    </p>
-    <p>Together, you build, break, and <span class="highlight">improve reality</span> — all on one magical platform.
-      <br><br>
-      <span class="highlight">GITHUB</span>: Where code comes alive with the power of open source.”
-    </p>
+  <div class="slide" id="slide4">
+    <img src="./assets/github.jpg" alt="GitHub Logo" class="logo" />
+    <p>“Welcome to <span class="highlight">GITHUB</span> — the social network for coders, the home of open source collaboration!”</p>
+    <p>Here, you <span class="highlight">push</span> your code, <span class="highlight">fork</span> others’ projects, and raise <span class="highlight">issues</span> (or just spot bugs).</p>
+    <p>Branching? That's teamwork at its peak:<br />
+      <span class="highlight">BRANCH</span> into possibilities.<br />
+      <span class="highlight">MERGE</span> your universes.</p>
+    <p>Together, you build, break, and <span class="highlight">improve reality</span> — all on one magical platform.<br /><br />
+      <span class="highlight">GITHUB</span>: Where code comes alive with the power of open source.”</p>
     <div class="buttons">
       <button class="btn" onclick="nextSlide(3)">← Back</button>
     </div>
   </div>
-
 
   <script>
     setTimeout(() => {
@@ -258,8 +213,6 @@
       document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
       document.getElementById('slide' + n).style.display = 'block';
     }
-
   </script>
 </body>
-
 </html>
