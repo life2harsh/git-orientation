@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,15 +9,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
   <link rel="stylesheet" href="home.css" />
+
 </head>
+
 <body>
-  <div class="app-container" id="app">
+  <div id="loadingScreen" style="display:flex;">
+    <img src="./assets/load.png" alt="Loading..." class="loading-image" />
+  </div>
+  <div class="app-container" id="app" style="display: none;">
     <div class="header">
       <div class="circle-wrapper">
-        <svg width="900" height="900" viewBox="0 0 900 900" style="position:absolute; top:0; left:0" aria-hidden="true" focusable="false">
+        <svg width="900" height="900" viewBox="0 0 900 900" style="position:absolute; top:0; left:0" aria-hidden="true"
+          focusable="false">
           <defs>
             <path id="outer-text-path" d="
               M 450,10                                                                                                                                                                                                                                        
@@ -36,11 +42,13 @@
           <g id="rotating-text">
             <text font-size="32" letter-spacing="10" dominant-baseline="middle" fill="#ffd700">
               <textPath startOffset="0%" href="#outer-text-path">
-                • Bill sees everything • Reality is an illusion • Trust no one • Open source unlocks the code • Pizza for all
+                • Bill sees everything • Reality is an illusion • Trust no one • Open source unlocks the code • Pizza
+                for all
               </textPath>
             </text>
           </g>
-          <image href="assets/bill.png" x="320" y="270" width="280" height="400" style="filter: drop-shadow(0 0 10px #ffd700)" alt="Bill Cipher" role="img"/>
+          <image href="assets/bill.png" x="320" y="270" width="280" height="400"
+            style="filter: drop-shadow(0 0 10px #ffd700)" alt="Bill Cipher" role="img" />
           <ellipse cx="457" cy="450" rx="18" ry="14" fill="white" pointer-events="none" />
           <circle id="pupil" cx="457" cy="450" r="8" fill="black" pointer-events="none" />
         </svg>
@@ -51,14 +59,18 @@
         <div class="partition-div result" style="top: 720px; left: 420px">leaderboard</div>
         <div class="partition-div about" style="top: 495px; left: 110px">about</div>
 
-        <div class="about-nodes">
-          <a href="https://discord.gg/bujDdu9u" target="_blank" class="icon-node" title="GitHub">GH</a>
-          <a href="https://instagram.com" target="_blank" class="icon-node" title="Instagram">IG</a>
-          <a href="https://discord.gg/bujDdu9u" target="_blank" class="icon-node" title="Discord">DC</a>
+        <div class="osdc-nodes">
+          <a href="https://chat.whatsapp.com/CFewmdu2yXKD8bpg2t5gB4?mode=r_t" target="_blank" class="icon-node whatsapp"
+            title="Whatsapp"><img src="assets/whatsapp.jpeg" alt="Whatsapp" srcset=""></a>
+          <a href="https://www.instagram.com/osdc.dev?igsh=ZHFuMTJrYjZoNGho" target="_blank" class="icon-node instagram"
+            title="Instagram"><img src="assets/instagram.png" alt="Instagram" srcset=""></a>
+          <a href="https://discord.com/invite/jiit-open-source-developer-s-community-475154983910899722" target="_blank"
+            class="icon-node discord" title="Discord"><img src="assets/discord.png" alt="Discord" srcset=""></a>
         </div>
       </div>
     </div>
   </div>
   <script src="home.js"></script>
 </body>
+
 </html>
