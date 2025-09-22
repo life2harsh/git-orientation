@@ -13,6 +13,7 @@ body {
       text-align: center;
       padding: 2rem;
       position: relative;
+
     }
     .circle-wrapper {
       position: relative;
@@ -73,8 +74,8 @@ body {
         drop-shadow(0 0 15px #ff0000)
         drop-shadow(0 0 20px #00ffff);
     }
-   .about-nodes {
-  position: absolute;
+   .osdc-nodes {
+  position: relative;
   width: 140px;
   height: 140px;
   top: 455px;
@@ -89,7 +90,14 @@ body {
   border-radius: 50%;
 }
 
-.partition-div.about:hover + .about-nodes {
+.osdc-nodes .icon-node img {
+  width: 50px;    
+  height: 50px;  
+  object-fit: contain;
+  border-radius: 50%; 
+}
+
+.partition-div.osdc:hover + .osdc-nodes {
   opacity: 1;
 }
 
@@ -97,36 +105,93 @@ body {
   position: absolute;
   width: 40px;
   height: 40px;
-  background: #ffd700;
   border-radius: 50%;
-  color: #000;
-  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
-  box-shadow: 0 0 8px #ffd700;
+  top: 50%;
+  left: 50%;
+  transform-origin: 20px 20px; /* center of the icon */
   transition: background 0.3s ease, transform 0.3s ease;
   cursor: pointer;
   user-select: none;
-  top: 50%;
-  left: 50%;
-  transform-origin: 20px 20px;
 }
 
-.icon-node.github {
-  transform: rotate(0deg) translate(60px) rotate(-0deg);
+.icon-node.whatsapp img {
+  width: 50px;
+  height: 50px;
+  transform: translateX(750px) translateY(410px);
 }
 
-.icon-node.instagram {
-  transform: rotate(120deg) translate(60px) rotate(-120deg);
+.icon-node.instagram img {
+  width: 50px;
+  height: 50px;
+    transform: translateX(754px) translateY(490px);}
+
+.icon-node.discord img {
+  width: 50px;
+  height: 50px;
+      transform: translateX(700px) translateY(560px);
 }
 
-.icon-node.discord {
-  transform: rotate(240deg) translate(60px) rotate(-240deg);
+
+
+#loadingScreen {
+  color: #ffd700;
+      text-align: center;
+      font-size: clamp(42px, 5vw, 46px);
+      line-height: 1.4;
+      user-select: none;
+      padding: 20px;
+      transition: opacity 1s ease-in-out;
 }
 
-.icon-node:hover {
-  background: #fff700;
-  transform: scale(1.2);
+
+#loadingSpinner {
+  margin-top: 20px;
+  border: 4px solid #222;
+  border-top: 4px solid #ffd700;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
 }
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+#loadingScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: floatUpDown 3s ease-in-out infinite;
+
+}
+
+@keyframes floatUpDown {
+  0%, 100% {
+    transform: translateY(10);
+  }
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+.loading-text {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+

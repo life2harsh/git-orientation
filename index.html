@@ -1,222 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git Workshop Challenge - Welcome to Weirdmageddon</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Book of Bill</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="home.css" />
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Creepster&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    
-    <div id="intro-page" class="intro-page">
+  <div id="loadingScreen" style="display:flex;">
+    <img src="./assets/load.png" alt="Loading..." class="loading-image" />
+  </div>
+  <div class="app-container" id="app" style="display: none;">
+    <div class="header">
+      <div class="circle-wrapper">
+        <svg width="900" height="900" viewBox="0 0 900 900" style="position:absolute; top:0; left:0" aria-hidden="true"
+          focusable="false">
+          <defs>
+            <path id="outer-text-path" d="
+              M 450,10                                                                                                                                                                                                                                        
+              a 430,430 0 1,1 0,860
+              a 430,430 0 1,1 0,-860
+            " />
+          </defs>
+          <circle cx="450" cy="450" r="380" stroke="#ffd700" stroke-width="6" fill="none" />
+          <circle cx="450" cy="450" r="250" stroke="#ffd700" stroke-width="6" fill="none" />
+          <g stroke="#ffd700" stroke-width="3">
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(0,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(72,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(144,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(216,450,450)" />
+            <line x1="450" y1="200" x2="450" y2="70" transform="rotate(288,450,450)" />
+          </g>
+          <g id="rotating-text">
+            <text font-size="32" letter-spacing="10" dominant-baseline="middle" fill="#ffd700">
+              <textPath startOffset="0%" href="#outer-text-path">
+                • Bill sees everything • Reality is an illusion • Trust no one • Open source unlocks the code • Pizza
+                for all
+              </textPath>
+            </text>
+          </g>
+          <image href="assets/bill.png" x="320" y="270" width="280" height="400"
+            style="filter: drop-shadow(0 0 10px #ffd700)" alt="Bill Cipher" role="img" />
+          <ellipse cx="457" cy="450" rx="18" ry="14" fill="white" pointer-events="none" />
+          <circle id="pupil" cx="457" cy="450" r="8" fill="black" pointer-events="none" />
+        </svg>
 
-        <div id="triangle" class="triangle">
-            <div class="triangle-inner"></div>
-        </div>
+        <div class="partition-div questions" style="top: 160px; left: 220px">questions</div>
+        <div class="partition-div guide" style="top: 165px; left: 610px">guide</div>
+        <div class="partition-div osdc" style="top: 490px; left: 720px">osdc</div>
+        <div class="partition-div result" style="top: 720px; left: 420px">leaderboard</div>
+        <div class="partition-div about" style="top: 495px; left: 110px">about</div>
 
-        <div id="bill-cipher" class="bill-cipher hidden">
-            <div class="bill-container">
-                <div class="billhattop"></div>
-                <div class="billhatbottom"></div>
-                <div class="billbody">
-                    <div class="billeye">
-                        <div class="billpupil"></div>
-                    </div>
-                    <div class="eyelashes">
-                        <div class="topeyelash1">(</div>
-                        <div class="topeyelash2">(</div>
-                        <div class="topeyelash3">(</div>
-                        <div class="topeyelash4">(</div>
-                        <div class="bottomeyelash1">(</div>
-                        <div class="bottomeyelash2">(</div>
-                        <div class="bottomeyelash3">(</div>
-                        <div class="bottomeyelash4">(</div>
-                    </div>
-                    <div class="billbricks">
-                        <div class="billbrickstop">
-                            <div class="topline1"></div>
-                            <div class="topline2"></div>
-                        </div>
-                        <div class="billbricksmiddle">
-                            <div class="middleline1"></div>
-                            <div class="middleline2"></div>
-                            <div class="middleline3"></div>
-                        </div>
-                        <div class="billbricksbottom">
-                            <div class="bottomline1"></div>
-                            <div class="bottomline2"></div>
-                        </div>
-                    </div>
-                    <div class="bowtie">
-                        <div class="billbowtieleft"></div>
-                        <div class="billbowtieright"></div>
-                    </div>
-                </div>
-                <div class="billslegs">
-                    <div class="leftleg">L</div>
-                    <div class="rightleg">L</div>
-                </div>
-                <div class="billsarms">
-                    <div class="leftarm">)</div>
-                    <div class="rightarm">)</div>
-                    <div class="lefthand"></div>
-                    <div class="righthand"></div>
-                </div>
-                <button id="weirdmageddon-btn" class="gravity-falls-font">Weirdmageddon</button>
-            </div>
+        <div class="osdc-nodes">
+          <a href="https://chat.whatsapp.com/CFewmdu2yXKD8bpg2t5gB4?mode=r_t" target="_blank" class="icon-node whatsapp"
+            title="Whatsapp"><img src="assets/whatsapp.jpeg" alt="Whatsapp" srcset=""></a>
+          <a href="https://www.instagram.com/osdc.dev?igsh=ZHFuMTJrYjZoNGho" target="_blank" class="icon-node instagram"
+            title="Instagram"><img src="assets/instagram.png" alt="Instagram" srcset=""></a>
+          <a href="https://discord.com/invite/jiit-open-source-developer-s-community-475154983910899722" target="_blank"
+            class="icon-node discord" title="Discord"><img src="assets/discord.png" alt="Discord" srcset=""></a>
         </div>
-
-        <div id="intro-text" class="intro-text hidden">
-            <h1 class="cipher-title gravity-falls-font">WELCOME TO</h1>
-            <h2 class="cipher-subtitle gravity-falls-font">GIT ORIENTATION</h2>
-            <p class="cipher-warning">Reality is an illusion... but Git is eternal</p>
-            <div class="click-prompt">Click me to begin the chaos!</div>
-        </div>
-
-        
-        <div id="slot-lever" class="slot-lever hidden">
-            <div class="lever-handle"></div>
-            <div class="lever-base"></div>
-            <div class="lever-glow"></div>
-            <div class="lever-text">Pull to enter the mystery shack</div>
-        </div>
+      </div>
     </div>
-
-    
-    <div id="main-content" class="main-content hidden">
-        
-        <div class="scene">
-            
-            <div class="wall">
-                <div class="window">
-                    <div class="window-pane"></div>
-                    <div class="window-pane"></div>
-                    <div class="window-pane"></div>
-                    <div class="window-pane"></div>
-                    <div class="mullions"></div>
-                    <div class="rain"></div>
-                </div>
-            </div>
-
-            
-            <div class="desk"></div>
-
-            
-            <div class="left-prism" aria-hidden="true"></div>
-
-            
-            <div class="skull" aria-hidden="true">
-                <div class="skull-eye"></div>
-            </div>
-
-            
-            <div class="candle" aria-hidden="true">
-                <div class="candle-drip"></div>
-                <div class="candle-flame"></div>
-            </div>
-
-            
-            <div class="book-stack" aria-hidden="true">
-                <div class="book-top"></div>
-                <div class="book-mid"></div>
-                <div class="book-btm"></div>
-                <div class="dagger">
-                    <div class="blade"></div>
-                    <div class="hilt"></div>
-                </div>
-            </div>
-
-            
-            <div class="tv-container">
-                
-                <div class="monitor-label">McGUCKET LABS</div>
-                
-                <div class="screw" style="top:18px;left:18px"></div>
-                <div class="screw" style="top:18px;right:18px"></div>
-                <div class="screw" style="bottom:210px;left:22px"></div>
-                <div class="screw" style="bottom:210px;right:22px"></div>
-
-                
-                <div class="tv-screen">
-                    
-                    <div class="triangle-display"></div>
-                    <div class="aperture-mask" aria-hidden="true"></div>
-                    <div class="screen-reflection" aria-hidden="true"></div>
-                    <div class="distort" aria-hidden="true"></div>
-
-                        
-                        <div class="triangle-display" role="button" aria-label="Open terminal">
-                            <svg class="triangle-svg" viewBox="0 0 200 180" width="100%" height="100%" aria-hidden="true">
-                                <defs>
-                                    <filter id="tri-glow" x="-50%" y="-50%" width="200%" height="200%">
-                                        <feGaussianBlur stdDeviation="2" result="blur"/>
-                                        <feMerge>
-                                            <feMergeNode in="blur"/>
-                                            <feMergeNode in="blur"/>
-                                            <feMergeNode in="SourceGraphic"/>
-                                        </feMerge>
-                                    </filter>
-                                </defs>
-                                
-                                <path d="M100 10 L15 165 L185 165 Z" fill="none" stroke="#ff3a3a" stroke-width="2" opacity="0.45" transform="translate(1,1)"/>
-                                <path d="M100 10 L15 165 L185 165 Z" fill="none" stroke="#3affff" stroke-width="2" opacity="0.45" transform="translate(-1,0)"/>
-                                
-                                <path d="M100 10 L15 165 L185 165 Z" fill="none" stroke="#baff9a" stroke-width="2" filter="url(#tri-glow)"/>
-                                
-                                <line x1="25" y1="165" x2="175" y2="165" stroke="#e6ffd1" stroke-width="2" opacity="0.9" filter="url(#tri-glow)"/>
-                                
-                                <ellipse cx="46" cy="48" rx="22" ry="28" fill="white" opacity="0.22">
-                                    <animate attributeName="opacity" values="0.18;0.26;0.18" dur="2.4s" repeatCount="indefinite"/>
-                                </ellipse>
-                            </svg>
-                        </div>
-                    
-                    <div id="questions-container" class="terminal-display hidden">
-                        <div class="terminal-line">
-                            <span class="prompt">root@mocucket:~$ </span>
-                            <span class="command">git_workshop_init</span>
-                        </div>
-                        <div class="loading-container">
-                            <span class="loading-text">Loading workshop questions...</span>
-                            <span class="loading-dots"></span>
-                        </div>
-                    </div>
-                </div>
-
-                
-                <div class="control-panel">
-                    <div class="lower-module">
-                        <div class="button-grid" aria-hidden="true">
-                            <div></div><div></div><div></div>
-                            <div></div><div></div><div></div>
-                            <div></div><div></div><div></div>
-                        </div>
-                        <div class="green-display" aria-hidden="true"></div>
-                        <div class="red-indicator" aria-hidden="true"></div>
-                        <div class="knob knob-left" aria-hidden="true"></div>
-                        <div class="knob knob-right" aria-hidden="true"></div>
-                        <div class="port-cluster" aria-hidden="true">
-                            <span></span><span></span><span></span>
-                        </div>
-                    </div>
-
-                    
-                    <div class="user-input-section visually-hidden">
-                        <input type="text" class="terminal-input" id="user-input" placeholder="Enter answer...">
-                        <div class="hash-output" id="hash-output">Generated hash will appear here</div>
-                        <button class="copy-button" onclick="copyHash()">COPY</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+  </div>
+  <script src="home.js"></script>
 </body>
+
 </html>
