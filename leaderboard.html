@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+    <title>Glitching & Teleporting Bill Cipher</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+
+        :root {
+            --gf-yellow: #f0e25a;
+            --gf-blue: #59cde2;
+            --gf-dark-purple: #1a0e2a;
+            --gf-purple: #3a1a52;
+            --gf-text-glow: 0 0 5px var(--gf-yellow), 0 0 10px var(--gf-yellow), 0 0 15px var(--gf-yellow);
+        }
+
+        body {
+            background-color: var(--gf-dark-purple);
+
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            text-align: center;
+            padding: 2em;
+
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill-rule="evenodd"%3E%3Cg fill="%232e1441" fill-opacity="0.4"%3E%3Cpath opacity=".5" d="M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            overflow: scroll;
+            position: relative;
+        }
+
+        .leaderboard-container {
+            max-width: 600px;
+            margin: auto;
+            border: 3px solid var(--gf-yellow);
+            border-radius: 10px;
+            box-shadow: var(--gf-text-glow);
+
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: 'Creepster', cursive;
+            font-size: 3.5em;
+            color: var(--gf-yellow);
+            text-shadow: var(--gf-text-glow);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+
+            animation: textGlitch 5s infinite steps(1);
+        }
+        @keyframes textGlitch {
+            0%, 100% { transform: none; opacity: 1; }
+            50% { transform: skew(-5deg) translate(-5px, 0); opacity: 0.8; }
+            51% { transform: none; opacity: 1; }
+            60% { transform: skew(5deg) translate(5px, 0); opacity: 0.8; }
+            61% { transform: none; opacity: 1; }
+            70% { text-shadow: var(--gf-blue-glow); color: var(--gf-blue); }
+            71% { text-shadow: var(--gf-text-glow); color: var(--gf-yellow); }
+        }
+
+        #leaderboard-list { list-style: none; padding: 0; margin: 0; }
+        .message { color: var(--gf-yellow); font-size: 1.5em; padding: 20px; }
+        .player-card {
+            background-color: var(--gf-purple);
+            border: 2px solid var(--gf-yellow);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .player-card:nth-child(1) { transition-delay: 0.1s; }
+        .player-card:nth-child(2) { transition-delay: 0.2s; }
+        .player-card:nth-child(3) { transition-delay: 0.3s; }
+        .player-card:nth-child(4) { transition-delay: 0.4s; }
+        .player-card:nth-child(5) { transition-delay: 0.5s; }
+        .player-card:nth-child(6) { transition-delay: 0.6s; }
+        .player-card:nth-child(7) { transition-delay: 0.7s; }
+        .player-card:nth-child(8) { transition-delay: 0.8s; }
+        .player-card.loaded { opacity: 1; transform: translateY(0); }
+        .player-card:hover { transform: translateY(0) scale(1.03); box-shadow: var(--gf-blue-glow); border-color: var(--gf-blue); }
+        .player-info { text-align: left; }
+        .player-name { font-size: 1.4em; font-weight: bold; color: #fff; }
+        .player-rank-title { font-size: 1em; font-style: italic; }
+        .rank-demons-pawn .player-rank-title { color: #ff4d4d; }
+        .rank-conspiracy-theorist .player-rank-title { color: #8a63d2; }
+        .rank-mystery-shack-regular .player-rank-title { color: var(--gf-blue); }
+        .rank-local .player-rank-title { color: #6abe39; }
+        .rank-tourist .player-rank-title { color: #cccccc; }
+        .player-score { font-family: 'Creepster', cursive; font-size: 2.5em; color: var(--gf-yellow); text-shadow: var(--gf-text-glow); }
+
+        #bill-cipher {
+            position: fixed;
+            width: 100px; 
+            height: auto;
+            z-index: 5; 
+            filter: drop-shadow(0 0 8px rgba(255, 255, 0, 0.7)); 
+            transition: left 0.5s ease-in-out, top 0.5s ease-in-out, transform 0.1s ease-in-out;
+        }
+
+        #bill-cipher:hover { animation: billGlitch 280ms steps(2) 1; }
+
+        .bill-glitching { animation: billGlitch 260ms steps(2) 1; }
+        @keyframes billGlitch {
+            0% { transform: scale(1) skewX(0deg); opacity: 1; }
+            25% { transform: scale(1.06) skewX(6deg) translateX(2px); opacity: 0.9; }
+            50% { transform: scale(0.94) skewX(-6deg) translateX(-2px); opacity: 1; }
+            75% { transform: scale(1.02) skewX(3deg) translateY(2px); opacity: 0.9; }
+            100% { transform: scale(1) skewX(0deg); opacity: 1; }
+        }
+
+        .bill-glitch-out { animation: billOut 160ms steps(2) 1; }
+        .bill-glitch-in { animation: billIn 220ms steps(2) 1; }
+        @keyframes billOut { 0% { opacity: 1; transform: scale(1) } 50% { transform: scale(0.98) skewX(4deg) } 100% { opacity: 0; transform: scale(0.96) skewX(-4deg) } }
+        @keyframes billIn { 0% { opacity: 0; transform: scale(0.96) skewX(-4deg) } 50% { transform: scale(1.04) skewX(4deg) } 100% { opacity: 1; transform: scale(1) } }
+
+        .bill-hidden { opacity: 0; }
+        .no-move-transition { transition: none !important; }
+
+        #teleporting-bill-canvas {
+            position: fixed;
+            z-index: 15; 
+            transition: top 0.5s ease-in-out, left 0.5s ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
+            pointer-events: auto; 
+        }
+
+        .glitch-pulse { animation: gpulse 0.2s ease-out 1; }
+        @keyframes gpulse { from { filter: drop-shadow(0 0 18px rgba(255,255,0,1)); transform: scale(1.05); } to { filter: drop-shadow(0 0 10px rgba(255,255,0,0.8)); transform: scale(1); } }
+
+        #teleporting-bill-canvas canvas {
+            display: block;
+        }
+
+        #rickroll-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: none; 
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+    #rickroll-overlay.show { display: flex; }
+
+    #rickroll-overlay { opacity: 0; }
+    #rickroll-overlay.show:not(.hiding) { animation: rrOverlayFadeIn 220ms ease-out forwards; }
+    #rickroll-overlay.show.hiding { animation: rrOverlayFadeOut 180ms ease-in forwards; }
+    @keyframes rrOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes rrOverlayFadeOut { from { opacity: 1; } to { opacity: 0; } }
+    .rr-frame { transform: scale(0.96); opacity: 0; }
+    #rickroll-overlay.show:not(.hiding) .rr-frame { animation: rrFrameIn 240ms cubic-bezier(.2,.8,.2,1) forwards; }
+    #rickroll-overlay.show.hiding .rr-frame { animation: rrFrameOut 160ms ease-in forwards; }
+    @keyframes rrFrameIn { 0% { transform: scale(0.96); opacity: 0; } 50% { transform: scale(1.02); } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes rrFrameOut { from { transform: scale(1); opacity: 1; } to { transform: scale(0.98); opacity: 0; } }
+        .rr-frame {
+            max-width: 92vw;
+            max-height: 92vh;
+            box-shadow: 0 0 30px rgba(255,255,0,0.4);
+            border: 3px solid var(--gf-yellow);
+            border-radius: 10px;
+            background: #000;
+            position: relative;
+        }
+        .rr-img { max-width: 92vw; max-height: 92vh; width: auto; height: auto; display: block; border-radius: 8px; }
+        .rr-close {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            color: var(--gf-yellow);
+            border: 1px solid var(--gf-yellow);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .no-scroll { overflow: hidden; }
+
+        #leaderboard-list { list-style: none; padding: 0; }
+        .player-card { background-color: var(--gf-purple); border: 1px solid var(--gf-yellow); padding: 10px; margin-bottom: 5px; text-align: left; }
+        .player-name { font-weight: bold; }
+        .message { color: var(--gf-yellow); font-size: 1.5em; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="leaderboard-container">
+        <h1>Weirdness Level</h1>
+        <ul id="leaderboard-list">
+            <li class="message">Loading scores...</li>
+        </ul>
+    </div>
+
+    <div id="teleporting-bill-canvas"></div>
+
+    <div id="rickroll-overlay" aria-hidden="true">
+        <div class="rr-frame">
+            <button class="rr-close" aria-label="Close">Close ✕</button>
+            <img id="rr-image" class="rr-img" alt="Surprise meme" src="" />
+        </div>
+    </div>
+
+    <script>
+
+        const leaderboardList = document.getElementById('leaderboard-list');
+
+        const scoresUrl = 'https://raw.githubusercontent.com/life2harsh/git-orientation/leaderboard/scores.json';
+
+        async function fetchAndDisplayScores() {
+            try {
+                const response = await fetch(scoresUrl);
+                const scores = await response.json();
+                const players = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+                leaderboardList.innerHTML = '';
+                players.forEach(([name, score], index) => {
+                    const li = document.createElement('li');
+                    li.className = 'player-card';
+                    li.innerHTML = `
+                        <div class="player-info">
+                            <div class="player-name">${name}</div>
+                            <div class="player-rank-title"></div>
+                        </div>
+                        <div class="player-score">${Number(score).toFixed(4)}</div>
+                    `;
+                    leaderboardList.appendChild(li);
+
+                    setTimeout(() => li.classList.add('loaded'), 100 + index * 100);
+                });
+            } catch (error) {
+                leaderboardList.innerHTML = `<li class="message">Error loading scores.</li>`;
+            }
+        }
+
+    const billCanvasContainer = document.getElementById('teleporting-bill-canvas');
+    const imgSrc = 'assets/image-removebg-preview.png';
+    const imgAltSrc = 'assets/bill_about.png';
+    const MEME_SRC = 'assets/deserve.png'; 
+    const BILL_TARGET_WIDTH = 100; 
+    let lastMouse = { x: innerWidth/2, y: innerHeight/2 };
+    let lastTeleport = 0;
+    let currentCooldown = 800; 
+    let isTeleporting = false; 
+    const PROX_MARGIN = 100; 
+
+    window.BillState = { glitchBoost: 0, fadeTarget: 0 };
+
+        function teleportBill(avoidPos) {
+
+            const w = billCanvasContainer.offsetWidth;
+            const h = billCanvasContainer.offsetHeight;
+
+            const corners = [
+                { top: '20px', left: '20px', x: 20, y: 20 },
+                { top: '20px', left: `calc(100vw - ${w}px - 20px)`, x: innerWidth - w - 20, y: 20 },
+                { top: `calc(100vh - ${h}px - 20px)`, left: '20px', x: 20, y: innerHeight - h - 20 },
+                { top: `calc(100vh - ${h}px - 20px)`, left: `calc(100vw - ${w}px - 20px)`, x: innerWidth - w - 20, y: innerHeight - h - 20 }
+            ];
+            let choices = corners;
+            if (avoidPos) {
+                choices = corners.filter(c => {
+                    const cx = c.x + w/2, cy = c.y + h/2;
+                    const dx = cx - avoidPos.x, dy = cy - avoidPos.y;
+                    const dist = Math.hypot(dx, dy);
+                    return dist > Math.max(PROX_MARGIN*1.5, Math.min(innerWidth, innerHeight)/3);
+                });
+                if (!choices.length) choices = corners; 
+            }
+            const targetCorner = choices[Math.floor(Math.random() * choices.length)];
+            billCanvasContainer.style.top = targetCorner.top;
+            billCanvasContainer.style.left = targetCorner.left;
+            lastTeleport = performance.now();
+        }
+
+        function farthestCornerFrom(px, py) {
+            const w = billCanvasContainer.offsetWidth;
+            const h = billCanvasContainer.offsetHeight;
+            const corners = [
+                { x: 20, y: 20 },
+                { x: innerWidth - w - 20, y: 20 },
+                { x: 20, y: innerHeight - h - 20 },
+                { x: innerWidth - w - 20, y: innerHeight - h - 20 }
+            ];
+            let best = corners[0], bestD2 = -1;
+            for (const c of corners) {
+                const dx = c.x - px, dy = c.y - py;
+                const d2 = dx*dx + dy*dy;
+                if (d2 > bestD2) { bestD2 = d2; best = c; }
+            }
+            return best;
+        }
+
+        function randomAwayPositionFrom(px, py) {
+            const w = billCanvasContainer.offsetWidth;
+            const h = billCanvasContainer.offsetHeight;
+            const margin = 20;
+            const minX = margin, maxX = innerWidth - w - margin;
+            const minY = margin, maxY = innerHeight - h - margin;
+            const minDist = Math.max(PROX_MARGIN * 1.6, Math.min(innerWidth, innerHeight) / 4);
+            for (let tries = 0; tries < 20; tries++) {
+                const x = Math.floor(minX + Math.random() * (maxX - minX));
+                const y = Math.floor(minY + Math.random() * (maxY - minY));
+                const dx = x - px, dy = y - py;
+                if (dx*dx + dy*dy >= minDist * minDist) return { x, y };
+            }
+
+            return farthestCornerFrom(px, py);
+        }
+
+        function chooseTargetPosition(px, py) {
+            const useRandom = Math.random() < 0.6; 
+            return useRandom ? randomAwayPositionFrom(px, py) : farthestCornerFrom(px, py);
+        }
+
+        function instantMoveTo(pos) {
+            billCanvasContainer.classList.add('no-move-transition');
+            billCanvasContainer.style.top = pos.y + 'px';
+            billCanvasContainer.style.left = pos.x + 'px';
+
+            requestAnimationFrame(() => billCanvasContainer.classList.remove('no-move-transition'));
+        }
+
+        function startGlitchBurst(mult = 1) {
+            if (!window.BillState) window.BillState = { glitchBoost: 0, fadeTarget: 0 };
+            window.BillState.glitchBoost = Math.max(window.BillState.glitchBoost, 0.9 * mult);
+            billCanvasContainer.classList.add('glitch-pulse');
+            setTimeout(() => billCanvasContainer.classList.remove('glitch-pulse'), 200);
+        }
+
+        function glitchVanishAndReappearChain(fromPx, fromPy) {
+            if (isTeleporting) return; 
+            isTeleporting = true;
+            startGlitchBurst(0.8);
+            const hops = Math.random() < 0.5 ? 0 : 1; 
+
+            const glitchOutDelay = 100;
+            const hopDelay = () => 90 + Math.floor(Math.random() * 50); 
+            const appearDelay = 140;
+            billCanvasContainer.classList.add('bill-glitching');
+            setTimeout(() => {
+                billCanvasContainer.classList.add('bill-hidden');
+
+                let i = 0;
+                const doHop = () => {
+                    if (i < hops) {
+                        const pos = randomAwayPositionFrom(fromPx, fromPy);
+                        instantMoveTo(pos);
+                        i++;
+                        setTimeout(doHop, hopDelay());
+                    } else {
+
+                        const finalPos = chooseTargetPosition(fromPx, fromPy);
+                        instantMoveTo(finalPos);
+                        setTimeout(() => {
+                            billCanvasContainer.classList.remove('bill-hidden');
+                            billCanvasContainer.classList.add('bill-glitching');
+                            setTimeout(() => {
+                                billCanvasContainer.classList.remove('bill-glitching');
+                                isTeleporting = false; 
+                            }, 200);
+                        }, appearDelay);
+                    }
+                };
+                doHop();
+            }, glitchOutDelay);
+        }
+
+        function sketch(p) {
+            let isLoaded = false;
+            let glitch;
+            let loadedImg, loadedAlt;
+            let fadeAlpha = 0; 
+
+            p.preload = function() {
+                loadedImg = p.loadImage(imgSrc, 
+                    () => isLoaded = true, 
+                    () => console.error("P5.js failed to load image. Check path.")
+                );
+                loadedAlt = p.loadImage(imgAltSrc);
+            }
+
+            p.setup = function() {
+                if (isLoaded) {
+
+                    if (loadedImg) loadedImg.resize(BILL_TARGET_WIDTH, 0); 
+                    if (loadedAlt) {
+
+                        loadedAlt.resize(loadedImg.width, loadedImg.height);
+                    }
+
+                    p.createCanvas(loadedImg.width, loadedImg.height);
+                    glitch = new Glitch(loadedImg);
+
+                    teleportBill();
+                }
+            };
+
+            p.draw = function() {
+                if (isLoaded) {
+                    p.clear();
+
+                    const bs = window.BillState || (window.BillState = { glitchBoost: 0, fadeTarget: 0 });
+                    bs.glitchBoost = Math.max(0, bs.glitchBoost - 0.02);
+                    glitch.show(bs.glitchBoost); 
+
+                    const lerp = 0.15; 
+                    fadeAlpha += ((window.BillState?.fadeTarget || 0) - fadeAlpha) * lerp;
+                    if (loadedAlt && Math.abs(fadeAlpha) > 0.001) {
+                        p.push();
+                        p.tint(255, Math.min(255, Math.max(0, fadeAlpha*255)));
+
+                        p.image(loadedAlt, 0, 0, p.width, p.height);
+                        p.pop();
+                    }
+                }
+            };
+
+            class Glitch {
+                constructor(img) {
+                    this.channelLen = 4; this.imgOrigin = img; this.imgOrigin.loadPixels();
+                    this.copyData = new Uint8ClampedArray(this.imgOrigin.pixels);
+                    this.flowLineImgs = []; this.shiftLineImgs = []; this.shiftRGBs = [];
+                    this.scatImgs = []; this.throughFlag = true;
+                    for (let i = 0; i < 1; i++) this.flowLineImgs.push({ pixels: null, t1: p.floor(p.random(0, 1000)), speed: p.floor(p.random(4, 24)), randX: p.floor(p.random(24, 80)) });
+                    for (let i = 0; i < 6; i++) this.shiftLineImgs.push(null);
+                    for (let i = 0; i < 1; i++) this.shiftRGBs.push(null);
+                    for (let i = 0; i < 3; i++) this.scatImgs.push({ img: null, x: 0, y: 0 });
+                }
+                replaceData(destImg, srcPixels) { for (let i = 0; i < destImg.pixels.length; i++) destImg.pixels[i] = srcPixels[i]; destImg.updatePixels(); }
+                flowLine(srcImg, obj) { let destPixels = new Uint8ClampedArray(srcImg.pixels); obj.t1 %= srcImg.height; obj.t1 += obj.speed; let tempY = p.floor(obj.t1); for (let y = 0; y < srcImg.height; y++) { if (tempY === y) { for (let x = 0; x < srcImg.width; x++) { let i = (y * srcImg.width + x) * this.channelLen; destPixels[i] = srcImg.pixels[i] + obj.randX; destPixels[i + 1] = srcImg.pixels[i + 1] + obj.randX; destPixels[i + 2] = srcImg.pixels[i + 2] + obj.randX; } } } return destPixels; }
+                shiftLine(srcImg, boost=0) { let destPixels = new Uint8ClampedArray(srcImg.pixels), rangeH = srcImg.height, rangeMin = p.floor(p.random(0, rangeH)), rangeMax = rangeMin + p.floor(p.random(1, rangeH - rangeMin)), offsetX = this.channelLen * p.floor(p.random(-40, 40)*(1+boost)); for (let y = rangeMin; y < rangeMax; y++) { for (let x = 0; x < srcImg.width; x++) { let i = (y * srcImg.width + x) * this.channelLen; destPixels[i] = srcImg.pixels[i + offsetX]; destPixels[i + 1] = srcImg.pixels[i + 1 + offsetX]; destPixels[i + 2] = srcImg.pixels[i + 2 + offsetX]; } } return destPixels; }
+                shiftRGB(srcImg, boost=0) { let destPixels = new Uint8ClampedArray(srcImg.pixels), range = 16*(1+boost), randR = (p.floor(p.random(-range, range)) * srcImg.width + p.floor(p.random(-range, range))) * this.channelLen, randG = (p.floor(p.random(-range, range)) * srcImg.width + p.floor(p.random(-range, range))) * this.channelLen, randB = (p.floor(p.random(-range, range)) * srcImg.width + p.floor(p.random(-range, range))) * this.channelLen; for (let i = 0; i < srcImg.pixels.length; i += 4) { destPixels[i] = srcImg.pixels[(i + randR) % srcImg.pixels.length]; destPixels[i + 1] = srcImg.pixels[(i + 1 + randG) % srcImg.pixels.length]; destPixels[i + 2] = srcImg.pixels[(i + 2 + randB) % srcImg.pixels.length]; } return destPixels; }
+                getRandomRectImg(srcImg) { let startX = p.floor(p.random(0, srcImg.width - 30)), startY = p.floor(p.random(0, srcImg.height - 50)), rectW = p.floor(p.random(30, srcImg.width - startX)), rectH = p.floor(p.random(1, 50)), destImg = srcImg.get(startX, startY, rectW, rectH); destImg.loadPixels(); return destImg; }
+
+                show(boost=0) {
+                    this.replaceData(this.imgOrigin, this.copyData);
+                    if (boost > 0.05) {
+                        this.flowLineImgs.forEach(v => this.replaceData(this.imgOrigin, this.flowLine(this.imgOrigin, v)));
+                        this.shiftLineImgs.forEach((v, i, arr) => { if (p.random(100) > 50 - boost*30) arr[i] = this.shiftLine(this.imgOrigin, boost); if(arr[i]) this.replaceData(this.imgOrigin, arr[i]); });
+                        this.shiftRGBs.forEach((v, i, arr) => { if (p.random(100) > 65 - boost*30) arr[i] = this.shiftRGB(this.imgOrigin, boost); if(arr[i]) this.replaceData(this.imgOrigin, arr[i]); });
+                    }
+
+                    p.image(this.imgOrigin, 0, 0);
+
+                    this.scatImgs.forEach(obj => {
+                        if (p.random(100) > 80) {
+                            obj.x = p.floor(p.random(-this.imgOrigin.width * 0.3, this.imgOrigin.width * 0.7));
+                            obj.y = p.floor(p.random(-this.imgOrigin.height * 0.1, this.imgOrigin.height));
+                            obj.img = this.getRandomRectImg(this.imgOrigin);
+                        }
+                        if (obj.img) p.image(obj.img, obj.x, obj.y);
+                    });
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAndDisplayScores);
+
+        document.addEventListener('mousemove', (e) => {
+
+            if (document.getElementById('rickroll-overlay').classList.contains('show')) return;
+            lastMouse = { x: e.clientX, y: e.clientY };
+            const r = billCanvasContainer.getBoundingClientRect();
+            const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+            const near = e.clientX >= r.left - PROX_MARGIN && e.clientX <= r.right + PROX_MARGIN && e.clientY >= r.top - PROX_MARGIN && e.clientY <= r.bottom + PROX_MARGIN;
+
+            const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+            const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+            const edgeDist = Math.hypot(dx, dy);
+
+            const proximity = Math.max(0, Math.min(1, 1 - edgeDist / PROX_MARGIN));
+
+            const triggerProb = 0.35 + 0.45 * proximity;
+
+            if (near && !inside && !isTeleporting && performance.now() - lastTeleport > currentCooldown && Math.random() < triggerProb) {
+                glitchVanishAndReappearChain(e.clientX, e.clientY);
+                lastTeleport = performance.now();
+
+                currentCooldown = 380 + Math.floor(Math.random() * 320); 
+            } else if (near && !inside) {
+
+                startGlitchBurst(0.6);
+            }
+        });
+
+        const overlay = document.getElementById('rickroll-overlay');
+        const rrImg = document.getElementById('rr-image');
+        const rrClose = overlay.querySelector('.rr-close');
+        function openMeme() {
+            rrImg.src = MEME_SRC; 
+            overlay.classList.add('show');
+            document.body.classList.add('no-scroll');
+        }
+        function closeMeme() {
+            overlay.classList.remove('show');
+            document.body.classList.remove('no-scroll');
+            rrImg.src = '';
+        }
+        billCanvasContainer.addEventListener('click', openMeme);
+        rrClose.addEventListener('click', closeMeme);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeMeme(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('show')) closeMeme(); });
+
+        new p5(sketch, 'teleporting-bill-canvas');
+
+    </script>
+</body>
+</html>

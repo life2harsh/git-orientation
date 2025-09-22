@@ -13,6 +13,31 @@
 			"isBackground": true,
 			"problemMatcher": [],
 			"group": "build"
+		},
+		{
+			"label": "Encrypt questions",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-u",
+				"tools/encrypt.py"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Encrypt questions",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-u",
+				"tools/encrypt.py"
+			],
+			"isBackground": false,
+			"group": "build"
 		}
 	]
 }

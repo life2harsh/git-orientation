@@ -1,8 +1,6 @@
-/* Gravity Falls Theme - Authentic Styling */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&family=Gochi+Hand&family=Lacquer&display=swap');
 
-/* Custom Gravity Falls Font */
 @font-face {
         font-family: 'Gravity Falls';
         src:
@@ -13,7 +11,6 @@
         font-display: swap;
 }
 
-/* Fallback Gravity Falls style using available fonts */
 .gravity-falls-font {
     font-family: 'Gravity Falls', 'Impact', 'Arial Black', sans-serif;
     font-weight: 900;
@@ -40,7 +37,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Add dark mode background for Bill Cipher intro area */
 .intro-page {
     position: fixed;
     top: 0;
@@ -62,7 +58,6 @@ body {
     pointer-events: none;
 }
 
-/* Disable floating background elements */
 .mystical-background,
 .floating-symbols,
 .symbol {
@@ -77,7 +72,6 @@ body {
     75% { transform: translateY(-15px) rotate(270deg); opacity: 0.6; }
 }
 
-/* ===== TRIANGLE TO BILL CIPHER TRANSFORMATION ===== */
 .triangle {
     width: 200px;
     height: 200px;
@@ -110,8 +104,8 @@ body {
 
 .triangle.clicked {
     animation: triangleTransform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    z-index: 999; /* Ensure triangle is behind Bill */
-    visibility: hidden; /* Completely hide after animation */
+    z-index: 999; 
+    visibility: hidden; 
 }
 
 @keyframes triangleTransform {
@@ -130,7 +124,6 @@ body {
     }
 }
 
-/* ===== BILL CIPHER CHARACTER (ACCURATE DESIGN) ===== */
 .bill-cipher {
     position: absolute;
     width: 300px;
@@ -166,7 +159,6 @@ body {
     }
 }
 
-/* Bill's Top Hat */
 .bill-cipher::before {
     content: '';
     position: absolute;
@@ -201,8 +193,7 @@ body {
     position: relative;
     filter: drop-shadow(0 0 30px #ffff00);
     animation: billFloat 3s ease-in-out infinite;
-    
-    /* Add brick pattern */
+
     background-image: 
         linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px),
         linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
@@ -215,7 +206,6 @@ body {
     66% { transform: translateY(-4px) rotate(-1deg); }
 }
 
-/* Bill's Single Eye */
 .bill-eye {
     position: absolute;
     top: 35%;
@@ -248,7 +238,6 @@ body {
     75% { transform: translate(-40%, -50%); }
 }
 
-/* Eye Lashes */
 .bill-eye::before,
 .bill-eye::after {
     content: '';
@@ -269,7 +258,6 @@ body {
     transform: rotate(20deg);
 }
 
-/* Additional eyelashes */
 .eyelid {
     position: absolute;
     top: -10px;
@@ -300,7 +288,6 @@ body {
     border-radius: 1px;
 }
 
-/* Bill's Bow Tie */
 .bill-bow-tie {
     position: absolute;
     bottom: 35%;
@@ -312,7 +299,6 @@ body {
     clip-path: polygon(0% 50%, 25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%);
 }
 
-/* Bill's Stick Arms */
 .bill-arms {
     position: absolute;
     width: 100%;
@@ -345,7 +331,6 @@ body {
     animation: armWave 2s ease-in-out infinite reverse;
 }
 
-/* Hand blobs at end of arms */
 .left-arm::after,
 .right-arm::after {
     content: '';
@@ -364,7 +349,6 @@ body {
     50% { transform: rotate(-15deg); }
 }
 
-/* Bill's Stick Legs */
 .bill-legs {
     position: absolute;
     bottom: -60px;
@@ -392,7 +376,6 @@ body {
     animation: legKick 3s ease-in-out infinite reverse;
 }
 
-/* ===== Bill Cipher - User Implementation ===== */
 .bill-container {
     margin-top: -50px;
     margin-left: -100px;
@@ -447,11 +430,11 @@ body {
 }
 
 .bill-container .billhattop {
-    display: none; /* Hide the hat top */
+    display: none; 
 }
 
 .bill-container .billhatbottom {
-    display: none; /* Hide the hat bottom */
+    display: none; 
 }
 
 .bill-container .billbody {
@@ -696,7 +679,6 @@ body {
     border: none;
 }
 
-/* Feet at end of legs */
 .left-leg::after,
 .right-leg::after {
     content: '';
@@ -732,7 +714,6 @@ body {
     100% { opacity: 0.8; transform: scale(1.2); }
 }
 
-/* ===== INTRO TEXT ===== */
 .intro-text {
     position: absolute;
     bottom: 20%;
@@ -820,7 +801,6 @@ body {
     50% { opacity: 0.7; transform: scale(0.95); }
 }
 
-/* ===== MAIN CONTENT (HIDDEN INITIALLY) ===== */
 .main-content {
     min-height: 100vh;
     background: linear-gradient(135deg, #000000 0%, #1a1a00 25%, #000000 50%, #001a00 75%, #000000 100%);
@@ -849,7 +829,6 @@ body {
     }
 }
 
-/* ===== SLOT MACHINE LEVER ON INTRO PAGE ===== */
 .slot-lever {
     position: absolute;
     right: 10%;
@@ -999,7 +978,6 @@ body {
     100% { opacity: 0.8; }
 }
 
-/* ===== COMPLETE INDUSTRIAL LABORATORY ENVIRONMENT ===== */
 .main-content {
     min-height: 100vh;
     position: relative;
@@ -1009,26 +987,23 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    
-    /* Industrial laboratory background with metal grating floor */
+
     background: 
-        /* Top atmospheric lighting */
+
         radial-gradient(ellipse 800px 200px at 50% 0%, rgba(100, 140, 180, 0.15) 0%, transparent 50%),
-        /* Main concrete wall background */
+
         linear-gradient(180deg, #2d2d2d 0%, #242424 30%, #1e1e1e 70%, #181818 100%);
 }
 
-/* Scene layout */
 .scene {
     position: relative;
     width: 1280px;
     height: 720px;
 }
 
-/* Back wall and window */
 .wall {
     position: absolute;
-    inset: 0 0 35% 0; /* leave space for desk */
+    inset: 0 0 35% 0; 
     background: radial-gradient(ellipse at 60% 50%, rgba(120,160,190,0.15), transparent 60%),
                 radial-gradient(ellipse at 30% 40%, rgba(80,110,150,0.1), transparent 55%);
 }
@@ -1040,7 +1015,7 @@ body {
     width: 36%;
     height: 58%;
     background: linear-gradient(180deg, #3c4d5e 0%, #283746 60%, #1c2935 100%);
-    border: 14px solid #2a2018; /* dark wood frame */
+    border: 14px solid #2a2018; 
     box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.6);
 }
 
@@ -1065,7 +1040,6 @@ body {
     to { background-position: -200px 600px; }
 }
 
-/* Desk surface */
 .desk {
     position: absolute;
     left: 0;
@@ -1077,7 +1051,6 @@ body {
     box-shadow: inset 0 40px 40px rgba(0,0,0,0.5);
 }
 
-/* Left glass prism */
 .left-prism {
     position: absolute;
     left: 6%;
@@ -1091,7 +1064,6 @@ body {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-/* Skull silhouette */
 .skull {
     position: absolute;
     left: 58%;
@@ -1103,7 +1075,7 @@ body {
     transform: rotate(6deg);
     box-shadow: 0 10px 20px rgba(0,0,0,0.7);
 }
-.skull::before{ /* jaw */
+.skull::before{ 
     content: '';
     position: absolute;
     bottom: -20px; left: 22px;
@@ -1117,7 +1089,6 @@ body {
     box-shadow: 92px -6px 0 0 #2a221d;
 }
 
-/* Candle with drips */
 .candle {
     position: absolute;
     right: 7%;
@@ -1130,7 +1101,6 @@ body {
 .candle-drip{position:absolute;left:10px;top:20px;width:14px;height:60px;background:#7dc85a;border-radius:10px}
 .candle-flame{position:absolute;top:-28px;left:20px;width:20px;height:34px;background:radial-gradient(circle at 50% 40%, #fff6b0, #ffb44d 60%, rgba(255,120,0,0.6));border-radius:50% 50% 60% 60%;filter:blur(0.4px) drop-shadow(0 0 12px rgba(255,200,40,0.6))}
 
-/* Book stack and dagger */
 .book-stack{position:absolute; right:16%; bottom:10%; width:240px; height:120px;}
 .book-btm,.book-mid,.book-top{position:absolute; left:0; right:0; height:32px; border-radius:4px; box-shadow:0 8px 14px rgba(0,0,0,0.6)}
 .book-btm{bottom:0;background:#39414a}
@@ -1140,16 +1110,13 @@ body {
 .blade{position:absolute; left:8px; top:-20px; width:8px; height:220px; background:linear-gradient(180deg,#cfd6de,#9aa6b2 60%,#7d8994); box-shadow:0 0 8px rgba(120,200,255,0.25) inset}
 .hilt{position:absolute; left:-10px; bottom:0; width:44px; height:18px; background:#3a3a3a; border-radius:2px}
 
-/* Position CRT in scene */
 .tv-container{ position:absolute; left:26%; bottom:14%; }
 
-/* Global vignette and subtle chromatic aberration */
 .scene::after{
     content:''; position:absolute; inset:-40px; pointer-events:none;
     background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
 }
 
-/* Industrial floor with realistic metal grating pattern */
 .main-content::before {
     content: '';
     position: absolute;
@@ -1158,7 +1125,7 @@ body {
     right: 0;
     height: 45%;
     background: 
-        /* Detailed metal grating pattern with depth */
+
         repeating-linear-gradient(90deg, 
             #2a2a2a 0px, #2a2a2a 6px, 
             #1a1a1a 6px, #1a1a1a 8px,
@@ -1173,28 +1140,25 @@ body {
             #1a1a1a 10px, #1a1a1a 12px,
             #2a2a2a 12px, #2a2a2a 18px, 
             #1a1a1a 18px, #1a1a1a 20px),
-        /* Concrete base with realistic texture */
+
         linear-gradient(180deg, 
             #242424 0%, 
             #1e1e1e 30%, 
             #181818 70%, 
             #0f0f0f 100%),
-        /* Subtle grime and wear patterns */
+
         radial-gradient(ellipse 300px 100px at 30% 100%, rgba(40, 30, 20, 0.3) 0%, transparent 70%),
         radial-gradient(ellipse 200px 80px at 70% 100%, rgba(30, 40, 30, 0.2) 0%, transparent 60%);
-    
-    /* Perspective floor transformation */
+
     transform: perspective(1000px) rotateX(60deg);
     transform-origin: bottom center;
     z-index: -2;
-    
-    /* Floor reflection and shadows */
+
     box-shadow: 
         inset 0 20px 40px rgba(0,0,0,0.6),
         inset 0 -5px 15px rgba(255,255,255,0.05);
 }
 
-/* Industrial wall texture with pipes and realistic details */
 .main-content::after {
     content: '';
     position: absolute;
@@ -1203,7 +1167,7 @@ body {
     right: 0;
     bottom: 0;
     background: 
-        /* Large vertical pipes and conduits with depth */
+
         linear-gradient(90deg, 
             transparent 8%, 
             rgba(100, 100, 100, 0.4) 9%, 
@@ -1218,14 +1182,14 @@ body {
             rgba(70, 70, 70, 0.4) 86%, 
             rgba(50, 50, 50, 0.3) 87%, 
             transparent 88%),
-        /* Horizontal conduits */
+
         linear-gradient(0deg, 
             transparent 25%, 
             rgba(70, 70, 70, 0.2) 26%, 
             rgba(90, 90, 90, 0.3) 27%, 
             rgba(60, 60, 60, 0.2) 28%, 
             transparent 29%),
-        /* Concrete wall texture with realistic surface */
+
         repeating-linear-gradient(45deg, 
             rgba(50, 50, 50, 0.1) 0px, 
             rgba(40, 40, 40, 0.15) 1px, 
@@ -1237,13 +1201,12 @@ body {
             rgba(35, 35, 35, 0.12) 1px, 
             transparent 2px, 
             transparent 5px),
-        /* Wall staining and weathering */
+
         radial-gradient(ellipse 400px 800px at 15% 30%, rgba(40, 30, 20, 0.15) 0%, transparent 50%),
         radial-gradient(ellipse 300px 600px at 85% 60%, rgba(30, 40, 30, 0.12) 0%, transparent 40%);
     z-index: -1;
 }
 
-/* Environmental objects container */
 .industrial-environment {
     position: absolute;
     top: 0;
@@ -1254,7 +1217,6 @@ body {
     z-index: -3;
 }
 
-/* Skull decoration (top left area) */
 .skull-decoration {
     position: absolute;
     top: 15%;
@@ -1295,7 +1257,6 @@ body {
     box-shadow: 8px 0 0 #333;
 }
 
-/* Scattered cables and wires */
 .cables {
     position: absolute;
     bottom: 10%;
@@ -1338,7 +1299,6 @@ body {
     transform: rotate(80deg);
 }
 
-/* Debris and small objects */
 .debris-1 {
     position: absolute;
     bottom: 25%;
@@ -1364,7 +1324,6 @@ body {
     box-shadow: 1px 2px 3px rgba(0,0,0,0.8);
 }
 
-/* Atmospheric lighting effects */
 .lighting-effect {
     position: absolute;
     top: 10%;
@@ -1413,43 +1372,36 @@ body {
     position: relative;
 }
 
-/* ===== CORRECT CRT MONITOR WITH 3D PERSPECTIVE ===== */
 .tv-container {
     position: relative;
-    width: 1200px;  /* Much wider like real CRT */
-    height: 600px;  /* Shorter height */
+    width: 1200px;  
+    height: 600px;  
     margin: 0 auto;
-    
-    /* 3D perspective transformation like reference */
+
     transform: perspective(1200px) rotateY(-2deg) rotateX(1deg);
     transform-style: preserve-3d;
-    
-    /* Monitor housing - beige/gray like reference */
+
     background: 
         linear-gradient(135deg, #9a9a8a 0%, #7d7d6d 25%, #8a8a7a 50%, #6a6a5a 75%, #5d5d4d 100%);
-    
-    /* Much thicker bezels with more realistic depth */
+
     border: 35px solid #7d7d6d;
     border-radius: 20px;
-    
-    /* Enhanced shadows for more realism */
+
     box-shadow: 
-        /* Main shadow on floor */
+
         0 40px 80px rgba(0,0,0,0.8),
         0 20px 40px rgba(0,0,0,0.6),
-        /* Monitor depth shadows */
+
         inset 0 0 40px rgba(0,0,0,0.4),
         inset 3px 3px 15px rgba(255,255,255,0.3),
         inset -3px -3px 15px rgba(0,0,0,0.5),
-        /* Atmospheric glow */
+
         0 0 100px rgba(0,150,0,0.1);
-    
-    /* Slight forward tilt like in reference */
+
     transform-origin: bottom center;
 }
 
-/* Distress details */
-.tv-container::before{ /* edge wear & grime */
+.tv-container::before{ 
     content:''; position:absolute; inset:-8px; border-radius:22px; pointer-events:none;
     background: radial-gradient(ellipse at 10% 20%, rgba(0,0,0,0.4), transparent 60%),
                 radial-gradient(ellipse at 90% 30%, rgba(0,0,0,0.35), transparent 65%),
@@ -1460,14 +1412,11 @@ body {
 .tv-container .screw::after{ content:''; position:absolute; left:2px; right:2px; top:5px; height:2px; background:#111 }
 .tv-container .rivet{ width:8px; height:8px }
 
-/* Optional button grid like reference */
 .button-grid{ position:absolute; right:78px; bottom:210px; width:90px; height:90px; display:grid; grid-template-columns:repeat(3,1fr); gap:8px }
 .button-grid div{ background:#1b1b1b; border:2px solid #2a2a2a; border-radius:4px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.6) }
 
-/* Inner bezel shadow lip */
 .tv-screen::before{ content:''; position:absolute; inset:-20px; border:20px solid #0b0b0b; border-radius:14px; pointer-events:none; box-shadow: inset 0 0 26px rgba(0,0,0,0.9) }
 
-/* MOCUCKET LABS label - authentic vintage computer style */
 .monitor-label {
     position: absolute;
     top: -18px;
@@ -1483,132 +1432,50 @@ body {
     border-radius: 3px;
     border: 2px solid #4a4a3a;
     z-index: 10;
-    
-    /* Authentic vintage label shadows */
+
     box-shadow: 
         inset 1px 1px 3px rgba(255,255,255,0.3),
         inset -1px -1px 3px rgba(0,0,0,0.4),
         0 2px 4px rgba(0,0,0,0.6);
-    
+
     text-shadow: 
         1px 1px 1px rgba(0,0,0,0.5),
         0 0 3px rgba(255,255,255,0.2);
-    
+
     letter-spacing: 1px;
 }
 
-/* ===== REALISTIC CRT SCREEN WITH CURVATURE ===== */
 .tv-screen {
     position: absolute;
     top: 45px;
     left: 65px;
     right: 65px;
-    bottom: 160px;  /* Leave room for integrated control panel */
+    bottom: 160px;  
     background: 
-        /* CRT screen curvature simulation */
+
         radial-gradient(ellipse at center, #001100 0%, #000800 70%, #000000 100%);
-    
-    /* Rounded corners like old CRT */
+
     border-radius: 12px;
-    
-    /* Thick black bezel like reference */
+
     border: 18px solid #0a0a0a;
-    
+
     overflow: hidden;
-    
-    /* Enhanced CRT glow effects */
+
     box-shadow: 
-        /* Deep inset shadow for CRT depth */
+
         inset 0 0 60px rgba(0,0,0,0.9),
         inset 0 0 30px rgba(0,0,0,0.7),
-        /* Green phosphor glow */
+
         inset 0 0 40px rgba(0,255,0,0.15),
         inset 0 0 20px rgba(0,255,0,0.1),
-        /* Outer glow */
+
         0 0 30px rgba(0,0,0,0.8),
         0 0 15px rgba(0,150,0,0.2);
-    
-    /* Simulate CRT screen curvature */
+
     transform: perspective(800px) rotateX(-1deg);
     position: relative;
 }
 
-/* Canvas for WebGL CRT inside tv-screen */
-#crt-canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* preserve 640x480 aspect inside frame */
-    pointer-events: none; /* don't block clicks intended for UI */
-    z-index: 0;
-}
-
-/* Overlay UI inside CRT */
-.crt-ui {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: 2fr 1fr; /* left form, right hash box */
-    gap: 16px;
-    padding: 24px;
-    color: #b6ffbf;
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    z-index: 10; /* ensure UI sits above CRT overlays */
-}
-.crt-left { display:flex; flex-direction:column; gap:10px; align-self:start; }
-.crt-label { font-size:12px; letter-spacing:1px; opacity:0.9; }
-.crt-input {
-    background: rgba(0,20,0,0.7);
-    border: 1px solid rgba(0,255,100,0.25);
-    color: #caffd3;
-    padding: 8px 10px;
-    border-radius: 6px;
-    outline: none;
-    box-shadow: inset 0 0 12px rgba(0,255,80,0.08);
-}
-.crt-input::placeholder{ color: rgba(180,255,200,0.45); }
-.crt-actions{ display:flex; gap:8px; margin-top:6px; }
-.crt-button{
-    background: linear-gradient(180deg, rgba(0,70,30,0.8), rgba(0,40,20,0.8));
-    border: 1px solid #00a85a;
-    color: #d9ffe8;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    text-shadow: 0 0 6px rgba(0,255,100,0.5);
-}
-.crt-button.ghost{ background: transparent; border-color: #0a7e4a; }
-.crt-button:hover{ filter: brightness(1.1); }
-.crt-status{ min-height: 18px; font-size: 12px; opacity: 0.9; }
-
-.crt-right { display:flex; align-items:stretch; }
-.crt-hashbox{
-    flex:1;
-    background: rgba(0,18,0,0.7);
-    border: 1px solid rgba(0,255,100,0.25);
-    border-radius: 8px;
-    box-shadow: inset 0 0 18px rgba(0,255,80,0.08);
-    display:flex; flex-direction:column;
-}
-.crt-hashbox-title{
-    padding: 8px 10px; font-size: 12px; letter-spacing:1px; opacity:0.85; border-bottom:1px solid rgba(0,255,100,0.15);
-}
-.crt-output{
-    flex:1; margin:0; padding:12px; color:#a6ffbf; white-space:pre-wrap; word-break:break-all; font-size: 12px;
-}
-
-/* --- Neon controls (shared) --- */
-.crt-controls{ display:flex; align-items:center; gap:10px; margin-top:10px; }
-.knob{ --angle: 0deg; width:34px; height:34px; border-radius:50%; background: radial-gradient(circle at 30% 30%, #0a0a0a, #031603 60%, #000); border:1px solid #13cc7a; position:relative; box-shadow: 0 0 10px rgba(0,255,120,0.25), inset 0 0 12px rgba(0,255,120,0.08); cursor:grab; }
-.knob:active{ cursor:grabbing; }
-.knob-dot{ position:absolute; width:6px; height:6px; border-radius:50%; background:#9affc6; left:50%; top:4px; transform: translateX(-50%) rotate(var(--angle)); transform-origin: 50% calc(100% - 4px); box-shadow: 0 0 6px rgba(0,255,120,0.8); }
-.neon-btn{ width:16px; height:16px; border-radius:50%; border:1px solid currentColor; background: currentColor; box-shadow: 0 0 6px currentColor, 0 0 14px currentColor; filter:saturate(1.4); }
-.neon-btn.green{ color:#00ff7a; }
-.neon-btn.blue{ color:#00cfff; }
-.knob-value{ font-size:12px; color:#baffc9; text-shadow: 0 0 6px rgba(0,255,120,0.6); }
-
-/* Triangle - just outline like reference */
 .triangle-display {
     position: absolute;
     top: 50%;
@@ -1619,28 +1486,25 @@ body {
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
     background: conic-gradient(from 0deg, rgba(0,255,120,0.0), rgba(0,255,120,0.0));
     filter: drop-shadow(0 0 8px rgba(0,255,100,0.5)) drop-shadow(0 0 16px rgba(0,255,100,0.3));
-    z-index: 1; /* behind UI */
 }
 
 .triangle-display::before, .triangle-display::after{
     content:''; position:absolute; inset:0; clip-path:inherit; border:2px solid #8affc1; border-radius:2px;
 }
-.triangle-display::after{ /* RGB fringe */
+.triangle-display::after{ 
     border-color: rgba(255,50,50,0.6); filter: blur(0.4px); transform: translateX(1px) translateY(0.5px);
     box-shadow: 0 0 14px rgba(255,60,60,0.12), 0 0 18px rgba(0,255,120,0.25);
 }
-.aperture-mask{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; z-index: 6;
+.aperture-mask{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen;
     background: repeating-linear-gradient(0deg, rgba(0,40,0,0.14) 0 2px, transparent 2px 3px), repeating-linear-gradient(90deg, rgba(0,30,0,0.06) 0 1px, transparent 1px 2px);
     opacity:0.4; filter:contrast(1.2);
 }
-.screen-reflection{ position:absolute; left:6%; top:10%; width:22%; height:28%; background: radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.25), rgba(255,255,255,0.0) 70%); z-index: 7;
+.screen-reflection{ position:absolute; left:6%; top:10%; width:22%; height:28%; background: radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.25), rgba(255,255,255,0.0) 70%);
     filter: blur(1px); opacity:0.35; pointer-events:none;
 }
 
-/* Subtle barrel distortion vignette */
-.tv-screen .distort { position:absolute; inset:-6%; border-radius:16px; box-shadow: inset 0 0 80px rgba(0,0,0,0.65); pointer-events:none; z-index: 5; }
+.tv-screen .distort { position:absolute; inset:-6%; border-radius:16px; box-shadow: inset 0 0 80px rgba(0,0,0,0.65); pointer-events:none; }
 
-/* Global chromatic aberration overlay */
 .scene::before{ content:''; position:absolute; inset:-2px; pointer-events:none; mix-blend-mode:screen; opacity:0.05;
     background: linear-gradient(90deg, rgba(255,40,40,0.35), rgba(40,255,255,0.35));
 }
@@ -1721,8 +1585,7 @@ body {
         linear-gradient(180deg, rgba(0,255,65,0.02) 0%, transparent 100%);
     overflow-y: auto;
     overflow-x: hidden;
-    
-    /* Terminal cursor blink */
+
     animation: terminalGlow 4s ease-in-out infinite;
 }
 
@@ -1735,7 +1598,6 @@ body {
     }
 }
 
-/* Custom scrollbar for terminal */
 .tv-content::-webkit-scrollbar {
     width: 8px;
 }
@@ -1843,7 +1705,6 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* ===== PHYSICAL INPUT PANEL BELOW TV ===== */
 .terminal-input-panel {
     position: absolute;
     bottom: 30px;
@@ -1934,7 +1795,6 @@ body {
     border-color: #666666;
 }
 
-/* ===== EXACT CONTROL PANEL FROM REFERENCE ===== */
 .control-panel {
     position: absolute;
     bottom: 30px;
@@ -1957,8 +1817,6 @@ body {
 
 .visually-hidden{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
-
-/* Green status bar - exact match to reference */
 .status-bar {
     width: 100%;
     height: 40px;
@@ -1967,14 +1825,12 @@ body {
     border: 3px inset #00aa00;
     border-radius: 4px;
     position: relative;
-    
-    /* Glowing effect */
+
     box-shadow: 
         0 0 15px rgba(0,255,0,0.5),
         inset 0 2px 4px rgba(255,255,255,0.3),
         inset 0 -2px 4px rgba(0,0,0,0.5);
-    
-    /* Status text */
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1985,7 +1841,6 @@ body {
     text-shadow: 0 1px 0px rgba(255,255,255,0.5);
 }
 
-/* Control buttons row */
 .control-buttons {
     display: flex;
     justify-content: space-between;
@@ -1993,7 +1848,6 @@ body {
     padding: 10px 0;
 }
 
-/* Red emergency button */
 .emergency-button {
     width: 60px;
     height: 60px;
@@ -2001,12 +1855,12 @@ body {
         radial-gradient(circle at 30% 30%, #ff6666 0%, #cc0000 70%, #880000 100%);
     border: 4px outset #cc0000;
     border-radius: 50%;
-    
+
     box-shadow: 
         0 4px 8px rgba(0,0,0,0.6),
         inset 0 2px 4px rgba(255,255,255,0.3),
         0 0 10px rgba(255,0,0,0.3);
-    
+
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -2026,7 +1880,6 @@ body {
         radial-gradient(circle at 30% 30%, #cc4444 0%, #990000 70%, #660000 100%);
 }
 
-/* Small control switches */
 .control-switches {
     display: flex;
     gap: 15px;
@@ -2054,7 +1907,6 @@ body {
         linear-gradient(135deg, #333333 0%, #555555 100%);
 }
 
-/* Input terminals */
 .input-terminals {
     display: flex;
     gap: 20px;
@@ -2070,7 +1922,6 @@ body {
     box-shadow: inset 2px 2px 6px rgba(0,0,0,0.9);
 }
 
-/* User input section styling */
 .user-input-section {
     display: flex;
     gap: 10px;
@@ -2136,7 +1987,6 @@ body {
     background: linear-gradient(135deg, #333333 0%, #555555 100%);
 }
 
-/* ===== ENVIRONMENTAL OBJECTS FROM REFERENCE ===== */
 .environment-objects {
     position: absolute;
     width: 100%;
@@ -2145,7 +1995,6 @@ body {
     z-index: 5;
 }
 
-/* Scattered papers */
 .paper-stack {
     position: absolute;
     right: -50px;
@@ -2160,8 +2009,7 @@ body {
         0 2px 8px rgba(0,0,0,0.6),
         inset 0 1px 2px rgba(255,255,255,0.8);
     transform: rotate(-15deg);
-    
-    /* Weathering and age stains */
+
     &::before {
         content: '';
         position: absolute;
@@ -2176,7 +2024,6 @@ body {
     }
 }
 
-/* Additional paper sheets */
 .scattered-paper-1 {
     position: absolute;
     right: 20px;
@@ -2203,7 +2050,6 @@ body {
     box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
-/* Small objects and debris */
 .small-debris {
     position: absolute;
     left: 80px;
@@ -2228,7 +2074,6 @@ body {
     box-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* ===== TV CONTROLS ===== */
 .tv-controls {
     position: absolute;
     bottom: 20px;
@@ -2265,7 +2110,6 @@ body {
         inset 0 2px 5px rgba(0,0,0,0.3);
 }
 
-/* ===== TV SPEAKER ===== */
 .tv-speaker {
     position: absolute;
     bottom: 30px;
@@ -2288,7 +2132,6 @@ body {
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
 }
 
-/* ===== TERMINAL DISPLAY STYLING ===== */
 .terminal-display {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 13px;
@@ -2341,7 +2184,6 @@ body {
     100% { content: ''; }
 }
 
-/* ===== QUESTION STYLES FOR TERMINAL ===== */
 .question-item {
     margin: 20px 0;
     padding: 15px 0;
@@ -2392,7 +2234,6 @@ body {
     51%, 100% { opacity: 0; }
 }
 
-/* ===== FORM ELEMENTS FOR TV SCREEN ===== */
 .tv-form,
 .tv-submission-form {
     margin-top: 30px;
@@ -2522,7 +2363,6 @@ body {
     opacity: 0.9;
 }
 
-/* ===== QUESTIONS STYLING ===== */
 .questions-container {
     margin-bottom: 30px;
 }
@@ -2602,7 +2442,6 @@ body {
     font-weight: bold;
 }
 
-/* ===== FORM STYLING ===== */
 .submission-form {
     background: rgba(0,0,0,0.6);
     border: 2px solid #ffff00;
@@ -2692,7 +2531,6 @@ body {
         inset 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* ===== RESULTS SECTION ===== */
 .result-section {
     background: rgba(0,0,0,0.8);
     border: 2px solid #00ff00;
@@ -2766,42 +2604,41 @@ body {
     display: none;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     .gravity-falls-title {
         font-size: 2.5rem;
     }
-    
+
     .triangle-accent {
         font-size: 1.5rem;
         margin: 0 10px;
     }
-    
+
     .container {
         padding: 20px;
     }
-    
+
     .slot-lever {
         right: 15px;
         width: 60px;
         height: 150px;
     }
-    
+
     .lever-base {
         width: 30px;
         height: 80px;
     }
-    
+
     .lever-handle {
         width: 20px;
         height: 60px;
         top: -50px;
     }
-    
+
     .cipher-title {
         font-size: 2.5rem;
     }
-    
+
     .cipher-subtitle {
         font-size: 1.5rem;
     }
@@ -2811,25 +2648,24 @@ body {
     .gravity-falls-title {
         font-size: 2rem;
     }
-    
+
     .container {
         padding: 15px;
     }
-    
+
     .submission-form, .result-section {
         padding: 20px;
     }
-    
+
     .cipher-title {
         font-size: 2rem;
     }
-    
+
     .cipher-subtitle {
         font-size: 1.2rem;
     }
 }
 
-/* ===== LEADERBOARD STYLES (GRAVITY FALLS THEME) ===== */
 .leaderboard-section {
     background: rgba(0,0,0,0.8);
     border: 2px solid #ffff00;
