@@ -30,33 +30,54 @@
       pupil.setAttribute('cy', eyeCenter.y + dy);
     });
 
-    const aboutDiv = document.querySelector('.partition-div.about');
-    const aboutNodes = document.querySelector('.about-nodes');
+    const osdcDiv = document.querySelector('.partition-div.osdc');
+    const osdcNodes = document.querySelector('.osdc-nodes');
 
-    aboutNodes.style.opacity = 0;
-    aboutNodes.style.pointerEvents = 'none';
-
-    aboutDiv.addEventListener('click', () => {
-      const visible = aboutNodes.style.opacity === '1';
+    osdcNodes.style.opacity = 0;
+    osdcNodes.style.pointerEvents = 'none';
+    
+const rect = osdcDiv.getBoundingClientRect();
+osdcNodes.style.position = 'absolute';
+osdcNodes.style.top = `${rect.top + window.scrollY + osdcDiv.offsetHeight -20}px`;  // 10px below
+osdcNodes.style.left = `${rect.left + window.scrollX}px`;
+    osdcDiv.addEventListener('click', () => {
+      const visible = osdcNodes.style.opacity === '1';
       if(visible) {
-        aboutNodes.style.opacity = '0';
-        aboutNodes.style.pointerEvents = 'none';
+        osdcNodes.style.opacity = '0';
+        osdcNodes.style.pointerEvents = 'none';
       } else {
-        aboutNodes.style.opacity = '1';
-        aboutNodes.style.pointerEvents = 'auto';
+        osdcNodes.style.opacity = '1';
+        osdcNodes.style.pointerEvents = 'auto';
       }
     });
 
     const questionDiv = document.querySelector('.partition-div.questions'); // Adjust class as per your markup
-    const introDic=document.querySelector('.about');
+    const introDiv = document.querySelector('.partition-div.about');
+    const guideDiv = document.querySelector('.partition-div.guide');
+
+guideDiv.addEventListener('click', () => {
+  window.location.href = 'guide.html';
+});
 if (questionDiv) {
   questionDiv.addEventListener('click', () => {
     window.location.href = 'questions.html';
   });
 }
 
-if (introDic) {
-  introDic.addEventListener('click', () => {
+if (introDiv) {
+  introDiv.addEventListener('click', () => {
     window.location.href = 'about.html';
   });
 }
+const loadingScreen = document.getElementById('loadingScreen');
+
+setTimeout(() => {
+  loadingScreen.style.opacity = 0;
+  setTimeout(() => {
+    loadingScreen.style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  }, 1000);
+}, 3000);
+
+
+

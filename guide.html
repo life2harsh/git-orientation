@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bill Cipher's OSDC Cipher Challenge - Player Guide</title>
+<style>
+  body {
+  font-family: url('./assets/gravity-falls/gravitation_falls.ttf');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: #a8d5ba;
+  padding: 2rem 3rem;
+  max-width: 900px;
+  margin: auto;
+  line-height: 1.6;
+  user-select: none;
+  background-color: black;
+}
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background:
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.77) 65%, rgba(0, 0, 0, 0) 100%),
+    url('./assets/guide_bg.jpg') no-repeat;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: -1;
+}
+  h1, h2, h3 {
+    color: #f0e72d;
+    text-shadow: 0 0 5px #f0e72d;
+  }
+  strong {
+    color: #f0e72d;
+  }
+  pre, code {
+    background: rgba(0,0,0,0.7);
+    padding: 0.2rem 0.4rem;
+    border-radius: 5px;
+    color: #f6f6f6;
+  }
+  pre {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  hr {
+    border: 1px solid #f0e72d;
+    margin: 1.5rem 0;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<h1>Bill Cipher's OSDC Cipher Challenge — Player Guide</h1>
+
+<section>
+  <h2>Step 1: Claim Your Copy of the Spellbook</h2>
+  <p>Fork the <code>git-orientation</code> repo from the OSDC GitHub at:</p>
+  <pre>https://github.com/life2harsh/git-orientation</pre>
+  <p>Then clone it to your lair (your computer) by running:</p>
+  <pre><code>git clone https://github.com/your-username/git-orientation.git
+cd git-orientation</code></pre>
+</section>
+
+<hr>
+
+<section>
+  <h2>Step 2: Pick Your Puzzle</h2>
+  <p>There’s no order to follow here — solve any question in any order you want.</p>
+</section>
+
+<hr>
+
+<section>
+  <h2>Step 3: Use the Mystery Portal to Generate Your String</h2>
+  <p>Visit the dedicated hashing page on the frontend, enter your GitHub username and answer to get your secret string.</p>
+</section>
+
+<hr>
+
+<section>
+  <h2>Step 4: Save Your Hash in the Submission Chamber</h2>
+  <p>Using your terminal:</p>
+  <pre><code>git remote -v</code></pre>
+  <p>Make sure you are inside your git-orientation local repo and the remote points to your fork.</p>
+  <p>Then enter the submissions folder:</p>
+  <pre><code>cd submissions</code></pre>
+  <p>Create a folder with your GitHub username (if you haven't already) and enter it:</p>
+  <pre><code>mkdir your_github_username
+cd your_github_username</code></pre>
+  <p>Create a text file named <code>yourusername_questionnumber.txt</code> and paste your generated hash inside:</p>
+  <pre><code>nano yourusername_questionnumber.txt</code></pre>
+</section>
+
+<hr>
+
+<section>
+  <h2>Step 5: Commit and Push Your Scroll</h2>
+  <p>Return to your repo root folder:</p>
+  <pre><code>cd ../..</code></pre>
+  <p>Add your submission, commit and push your changes:</p>
+  <pre><code>git add submissions/your_github_username/yourusername_questionnumber.txt
+git commit -m "Answer submission for question 3 by yourusername"
+git pull origin main
+git push origin main
+</code></pre>
+</section>
+
+<hr>
+
+<section>
+  <h2>Step 6: Pull Request — Prove Your Worth</h2>
+  <p>Go to your fork’s GitHub page, hit the <strong>Compare & pull request</strong> button,</p>
+  <p>Add a clear title like:<br><code>Q3 answer submission by yourusername</code></p>
+  <p>Send the pull request and wait for the OSDC Guardians to review and merge it.</p>
+</section>
+
+<hr>
+
+<section>
+  <h2>Tips from Bill Cipher</h2>
+  <ul>
+    <li>Always pull before you push to stay in sync with others: <code>git pull origin main</code></li>
+    <li>Hashes are unique to your username and answer, so no cheating by copying!</li>
+    <li>Tackle any question, any time, in any order.</li>
+    <li>Need help? Ask in the OSDC Discord.</li>
+  </ul>
+</section>
+
+<br>
+<p>Good luck, and may your secrets stay safe from Bill!</p>
+
+</body>
+</html>
