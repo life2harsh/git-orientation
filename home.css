@@ -24,9 +24,11 @@ body {
       overflow: visible;
     }
     .circle-wrapper svg { width: 100%; height: 100%; display: block; }
-    /* clickable wedge hover styling */
-    .sector-wedge { cursor: pointer; }
-    .sector-wedge:hover { filter: drop-shadow(0 0 10px #ffd700a0); }
+  
+  .sector-wedge { cursor: pointer; }
+  .sector-wedge:hover { filter: drop-shadow(0 0 10px #ffd700a0); }
+  
+  svg text, svg textPath { pointer-events: none; }
     .header h1 {
       font-size: 2rem;
       color: #ffd700;
@@ -94,7 +96,7 @@ body {
   justify-content: center;
   top: 50%;
   left: 50%;
-  transform-origin: 20px 20px; /* center of the icon */
+  transform-origin: 20px 20px; 
   transition: background 0.3s ease, transform 0.3s ease;
   cursor: pointer;
   user-select: none;
@@ -117,8 +119,6 @@ body {
       transform: translateX(700px) translateY(560px);
 }
 
-
-
 #loadingScreen {
   color: #ffd700;
       text-align: center;
@@ -128,7 +128,6 @@ body {
       padding: 20px;
       transition: opacity 1s ease-in-out;
 }
-
 
 #loadingSpinner {
   margin-top: 20px;
@@ -144,7 +143,6 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
 
 #loadingScreen {
   position: fixed;
@@ -177,4 +175,12 @@ body {
   margin-bottom: 20px;
 }
 
-
+#osdc-overlay { pointer-events: none; z-index: 2; }
+#osdc-overlay .osdc-icon { pointer-events: auto; }
+#osdc-overlay .osdc-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
