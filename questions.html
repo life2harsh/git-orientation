@@ -148,7 +148,7 @@ void main(){
 
     const ui = { user:'', ans:'', output:'—', status:'', caretOn:true, qIndex:0, qHover:-1, hover:null };
 
-  const term = { state:'splash', revealIdx:0, revealSpeed:16, inputActive:false, inputBuffer:'', hashRevealIdx:0, hashText:'', scroll:0, scrollMax:0, scrollDrag:false, scrollGrabY:0, splashT:0, editOnly:null, hintMode:false, hintTrans:{ active:false, t:0 }, revSplash:{ active:false, t:0 }, glitchBurst:{ active:false, t:0 }, hintPrint:{ fmtIdx:0, hintIdx:0 }, hintPrintSpeed:{ fmt:48, hint:36 } };
+  const term = { state:'splash', revealIdx:0, revealSpeed:16, inputActive:false, inputBuffer:'', hashRevealIdx:0, hashText:'', scroll:0, scrollMax:0, scrollDrag:false, scrollGrabY:0, splashT:0, editOnly:null, hintMode:false, hintTrans:{ active:false, t:0 }, revSplash:{ active:false, t:0 }, glitchBurst:{ active:false, t:0 }, hintPrint:{ fmtIdx:0, hintIdx:0 }, hintPrintSpeed:{ fmt:48, hint:36 }, flash:{ active:false, t:0, countdown:300, duration:0.14 } };
 
   const DRAW_CANVAS_QBTNS = true; 
   let qBtnsH = 0;
@@ -240,6 +240,7 @@ void main(){
   let ansEditBtnRect=null; let ansEditHot=false;
 
   let videoLinkRect=null; let videoLinkHot=false; let videoLinkHref='';
+  let imageLinkRect=null; let imageLinkHot=false; let imageLinkHref='';
   canvas.addEventListener('mousemove', e=>{
     const p=toBuf(e);
     layoutQButtons(); ui.qHover=-1;
@@ -259,6 +260,7 @@ void main(){
     const overUserEdit = userEditHot;
     const overAnsEdit = ansEditHot;
     const overVideo = videoLinkRect ? ptIn(videoLinkRect, p) : false; videoLinkHot = overVideo;
+    const overImage = imageLinkRect ? ptIn(imageLinkRect, p) : false; imageLinkHot = overImage;
     ui.hover = (term.revSplash?.active || term.glitchBurst?.active) ? null : (
       (ui.qHover!==-1) ? 'qbtn' : (
         overPyr ? 'hintToggle' : (
@@ -266,7 +268,9 @@ void main(){
             overCopy ? 'copy' : (
               overUserEdit ? 'editUser' : (
                 overAnsEdit ? 'editAns' : (
-                  overVideo ? 'video' : null
+                  overVideo ? 'video' : (
+                    overImage ? 'image' : null
+                  )
                 )
               )
             )
@@ -310,6 +314,7 @@ void main(){
   if(copyBtnRect){ const enabled=(term.state==='showHash' || term.state==='done') && ui.output && ui.output!=='—'; if(enabled && ptIn(copyBtnRect,p)){ copyOutput(); return; } }
 
   if(videoLinkRect && ptIn(videoLinkRect,p) && videoLinkHref){ try{ window.open(String(videoLinkHref), '_blank', 'noopener'); } catch {} return; }
+      if(imageLinkRect && ptIn(imageLinkRect,p) && imageLinkHref){ try{ window.open(String(imageLinkHref), '_blank', 'noopener'); } catch {} return; }
       if(userEditBtnRect && ptIn(userEditBtnRect,p)){
         term.state='promptUser'; term.inputActive=true; term.inputBuffer=String(ui.user||''); term.editOnly='user'; return;
       }
@@ -375,6 +380,16 @@ void main(){
 
       const ir=innerRect();
 
+      if(term.state!=='splash' && !term.revSplash?.active && !term.glitchBurst?.active){
+        if(!term.flash.active){
+          term.flash.countdown -= dt;
+          if(term.flash.countdown <= 0){ term.flash.active = true; term.flash.t = 0; term.flash.countdown = 300; }
+        } else {
+          term.flash.t += dt;
+          if(term.flash.t >= (term.flash.duration||0.14)){ term.flash.active = false; }
+        }
+      }
+
       if(term.state==='splash'){
         term.splashT += dt;
         const center={x:ir.x+ir.w*0.5, y:ir.y+ir.h*0.5};
@@ -421,6 +436,7 @@ void main(){
       if(loadingAnim > 0){ const alpha=Math.abs(Math.cos(Math.PI*loadingAnim)); ctx.globalAlpha=0.3 + 0.7*alpha; }
 
       videoLinkRect = null; videoLinkHref = '';
+      imageLinkRect = null; imageLinkHref = '';
       if(!term.revSplash?.active && !term.glitchBurst?.active){
         const qobj = (Array.isArray(window.__questions) && window.__questions[ui.qIndex]) || null;
         const href = qobj && (qobj.videoUrl || qobj.video || qobj.link);
@@ -440,6 +456,24 @@ void main(){
           ctx.restore();
           videoLinkRect = { x: tx-2, y: y-12, w: tw+4, h: lineH };
           videoLinkHref = String(href);
+          y += lineH + 8;
+        }
+
+        const imgHref = qobj && (qobj.imageUrl || qobj.image || qobj.img);
+        if(imgHref){
+          const label = '🖼 View image';
+          ctx.save();
+          ctx.font='12px Inconsolata, monospace';
+          if(term.hintMode){ ctx.fillStyle = '#ffd6d6'; ctx.shadowColor='rgba(255,64,64,0.18)'; }
+          else { ctx.fillStyle = '#b7ffe0'; ctx.shadowColor='rgba(0,255,120,0.18)'; }
+          ctx.shadowBlur=3;
+          ctx.fillText(label, tx, y);
+          const tw = ctx.measureText(label).width;
+          ctx.beginPath(); ctx.moveTo(tx, y+2); ctx.lineTo(tx+tw, y+2);
+          ctx.strokeStyle = term.hintMode ? '#ff9a9a' : '#19f07b'; ctx.lineWidth=1; ctx.stroke();
+          ctx.restore();
+          imageLinkRect = { x: tx-2, y: y-12, w: tw+4, h: lineH };
+          imageLinkHref = String(imgHref);
           y += lineH + 8;
         }
       }
@@ -527,6 +561,20 @@ void main(){
       const totalHeight = y - (ty0 - term.scroll);
       term.scrollMax = Math.max(0, totalHeight - ir.h);
       term.scroll = clamp(term.scroll, 0, term.scrollMax);
+
+      if(term.flash.active && !term.revSplash?.active && !term.glitchBurst?.active){
+        const cx = ir.x + ir.w*0.5, cy = ir.y + ir.h*0.5;
+        ctx.save();
+        ctx.font = '14px Inconsolata, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        if(term.hintMode){ ctx.fillStyle='#ffdede'; ctx.shadowColor='rgba(255,64,64,0.5)'; }
+        else { ctx.fillStyle='#d8ffe6'; ctx.shadowColor='rgba(0,255,120,0.5)'; }
+        ctx.shadowBlur=12;
+        const msg = 'i wonder what happens if i click this';
+        ctx.fillText(msg, cx, cy);
+        ctx.restore();
+      }
 
   ctx.globalAlpha = 1.0; ctx.restore();
 
