@@ -1,4 +1,4 @@
-    const rotatingGroup = document.getElementById("rotating-text");
+const rotatingGroup = document.getElementById("rotating-text");
     let angle = 0;
     function animateRotation() {
       angle += 0.3;
@@ -30,45 +30,98 @@
       pupil.setAttribute('cy', eyeCenter.y + dy);
     });
 
-    const osdcDiv = document.querySelector('.partition-div.osdc');
-    const osdcNodes = document.querySelector('.osdc-nodes');
+    // Build clickable wedge sectors and curved labels
+    (function buildSectors(){
+      const svg = document.querySelector('.circle-wrapper svg');
+      const wedgesGroup = svg.querySelector('#sector-wedges');
+      const labelsGroup = svg.querySelector('#sector-labels');
+      if(!svg || !wedgesGroup || !labelsGroup) return;
 
-    osdcNodes.style.opacity = 0;
-    osdcNodes.style.pointerEvents = 'none';
-    
-const rect = osdcDiv.getBoundingClientRect();
-osdcNodes.style.position = 'absolute';
-osdcNodes.style.top = `${rect.top + window.scrollY + osdcDiv.offsetHeight -20}px`;  // 10px below
-osdcNodes.style.left = `${rect.left + window.scrollX}px`;
-    osdcDiv.addEventListener('click', () => {
-      const visible = osdcNodes.style.opacity === '1';
-      if(visible) {
-        osdcNodes.style.opacity = '0';
-        osdcNodes.style.pointerEvents = 'none';
-      } else {
-        osdcNodes.style.opacity = '1';
-        osdcNodes.style.pointerEvents = 'auto';
+      const cx = 450, cy = 450;
+      const rInner = 255; // just outside inner circle
+      const rOuter = 380; // matches outer circle
+      const sectors = [
+        { key: 'questions', text: 'questions', href: 'questions.html', baseAngle: -90 },
+        { key: 'guide', text: 'guide', href: 'guide.html', baseAngle: -90 + 72 },
+        { key: 'osdc', text: 'osdc', href: null, baseAngle: -90 + 144 },
+        { key: 'leaderboard', text: 'leaderboard', href: 'leaderboard.html', baseAngle: -90 + 216 },
+        { key: 'about', text: 'about', href: 'about.html', baseAngle: -90 + 288 },
+      ];
+
+      const sweep = 72; // 360/5
+
+      function polarToCartesian(cx, cy, r, angleDeg){
+        const rad = (angleDeg-90) * Math.PI/180; // SVG arc uses 0 at 3 o'clock; adjust for math
+        return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
       }
-    });
 
-    const questionDiv = document.querySelector('.partition-div.questions'); // Adjust class as per your markup
-    const introDiv = document.querySelector('.partition-div.about');
-    const guideDiv = document.querySelector('.partition-div.guide');
+      sectors.forEach((s, i) => {
+        const start = s.baseAngle;
+        const end = s.baseAngle + sweep;
 
-guideDiv.addEventListener('click', () => {
-  window.location.href = 'guide.html';
-});
-if (questionDiv) {
-  questionDiv.addEventListener('click', () => {
-    window.location.href = 'questions.html';
-  });
-}
+        const p1 = polarToCartesian(cx, cy, rInner, start);
+        const p2 = polarToCartesian(cx, cy, rOuter, start);
+        const p3 = polarToCartesian(cx, cy, rOuter, end);
+        const p4 = polarToCartesian(cx, cy, rInner, end);
 
-if (introDiv) {
-  introDiv.addEventListener('click', () => {
-    window.location.href = 'about.html';
-  });
-}
+        const largeArc = sweep > 180 ? 1 : 0;
+
+        const d = [
+          `M ${p1.x} ${p1.y}`,
+          `L ${p2.x} ${p2.y}`,
+          `A ${rOuter} ${rOuter} 0 ${largeArc} 1 ${p3.x} ${p3.y}`,
+          `L ${p4.x} ${p4.y}`,
+          `A ${rInner} ${rInner} 0 ${largeArc} 0 ${p1.x} ${p1.y}`,
+          'Z'
+        ].join(' ');
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d', d);
+        path.setAttribute('fill', 'rgba(255,215,0,0.08)');
+        path.setAttribute('stroke', '#ffd70055');
+        path.setAttribute('class', `sector-wedge sector-${s.key}`);
+
+        if(s.href){
+          path.addEventListener('click', () => window.location.href = s.href);
+        } else if (s.key === 'osdc') {
+          const osdcNodes = document.querySelector('.osdc-nodes');
+          path.addEventListener('click', () => {
+            const visible = osdcNodes.style.opacity === '1';
+            osdcNodes.style.opacity = visible ? '0' : '1';
+            osdcNodes.style.pointerEvents = visible ? 'none' : 'auto';
+          });
+        }
+
+        wedgesGroup.appendChild(path);
+
+        // label path at mid radius
+        const rLabel = (rInner + rOuter)/2 + 5;
+        const a1 = start + 3;
+        const a2 = end - 3;
+        const lp1 = polarToCartesian(cx, cy, rLabel, a1);
+        const lp2 = polarToCartesian(cx, cy, rLabel, a2);
+        const labelId = `sector-label-path-${s.key}`;
+        const labelPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+        const sweepFlag = (a2 - a1) > 180 ? 1 : 0;
+        labelPath.setAttribute('d', `M ${lp1.x} ${lp1.y} A ${rLabel} ${rLabel} 0 ${sweepFlag} 1 ${lp2.x} ${lp2.y}`);
+        labelPath.setAttribute('id', labelId);
+        labelPath.setAttribute('fill','none');
+        labelsGroup.appendChild(labelPath);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('fill', '#ffd700');
+        text.setAttribute('font-size', '22');
+        text.setAttribute('letter-spacing','2');
+        text.setAttribute('style','filter: drop-shadow(0 0 6px #ffd700)');
+        const textPath = document.createElementNS('http://www.w3.org/2000/svg','textPath');
+        textPath.setAttributeNS('http://www.w3.org/1999/xlink','href', `#${labelId}`);
+        textPath.setAttribute('startOffset','50%');
+        textPath.setAttribute('text-anchor','middle');
+        textPath.textContent = s.text;
+        text.appendChild(textPath);
+        labelsGroup.appendChild(text);
+      });
+    })();
 const loadingScreen = document.getElementById('loadingScreen');
 
 setTimeout(() => {

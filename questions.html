@@ -55,7 +55,7 @@
     let regl; let spriteTexture; let quad; let __fallback2D=false; let __view2dCtx=null;
 
     const THEME = {
-      default: { fg: hex2vec('#00ff41'), bg: hex2vec('#000000') },
+      default: { fg: hex2vec('#00e050'), bg: hex2vec('#000000') },
       hint:    { fg: hex2vec('#ff3b3b'), bg: hex2vec('#000000') }
     };
     try{
@@ -157,7 +157,7 @@ void main(){
 
     function roundRect(r, rad=6, fill='rgba(0,18,0,0.72)', stroke='rgba(0,255,120,0.27)'){ const {x,y,w,h}=r; const rr=rad; ctx.beginPath(); ctx.moveTo(x+rr,y); ctx.arcTo(x+w,y,x+w,y+h,rr); ctx.arcTo(x+w,y+h,x,y+h,rr); ctx.arcTo(x,y+h,x,y,rr); ctx.arcTo(x,y,x+w,y,rr); ctx.closePath(); ctx.fillStyle=fill; ctx.fill(); ctx.lineWidth=1; ctx.strokeStyle=stroke; ctx.stroke(); }
   function terminalFrame(r){
-    const stroke = term.hintMode ? 'rgba(255,64,64,0.28)' : 'rgba(0,255,120,0.22)';
+    const stroke = term.hintMode ? 'rgba(255,64,64,0.28)' : 'rgba(0,255,120,0.16)';
     roundRect(r, 10, 'rgba(0,0,0,0.95)', stroke);
   }
     function wrapText(s,x,y,maxW,lineH){ const words=String(s).split(/\s+/); let line=''; for(let i=0;i<words.length;i++){ const test=line?line+' '+words[i]:words[i]; if(ctx.measureText(test).width>maxW){ ctx.fillText(line,x,y); line=words[i]; y+=lineH; } else line=test; } ctx.fillText(line,x,y); }
@@ -204,7 +204,7 @@ void main(){
     }
     function drawQButtons(){
       if(!qBtnRects.length) return;
-      if(term.hintMode){ roundRect(L.qBtnsRect,6,'rgba(18,0,0,0.56)','rgba(255,80,80,0.20)'); } else { roundRect(L.qBtnsRect,6,'rgba(0,18,0,0.56)','rgba(0,255,120,0.20)'); }
+  if(term.hintMode){ roundRect(L.qBtnsRect,6,'rgba(18,0,0,0.56)','rgba(255,80,80,0.20)'); } else { roundRect(L.qBtnsRect,6,'rgba(0,18,0,0.56)','rgba(0,255,120,0.16)'); }
       ctx.save(); ctx.font='12px Inconsolata, monospace';
       for(const r of qBtnRects){
         const active=(r.index===ui.qIndex), hot=(r.index===ui.qHover);
@@ -213,7 +213,7 @@ void main(){
           : (active? 'rgba(0,72,36,0.96)' : (hot? 'rgba(10,62,34,0.9)' : 'rgba(0,40,20,0.78)'));
         const stroke= term.hintMode
           ? (active? '#ff6b6b' : (hot? '#ff5050' : '#a83a3a'))
-          : (active? '#22ff9a' : (hot? '#19f07b' : '#0aa85a'));
+          : (active? '#1ee38b' : (hot? '#15d06b' : '#0a8f4e'));
         roundRect(r,4,fill,stroke);
         const labelTxt='Q'+String(r.index+1);
         const tw=ctx.measureText(labelTxt).width;
@@ -241,6 +241,7 @@ void main(){
 
   let videoLinkRect=null; let videoLinkHot=false; let videoLinkHref='';
   let imageLinkRect=null; let imageLinkHot=false; let imageLinkHref='';
+  let hintCopyRect=null; let hintCopyHot=false; let hintCopyValue='';
   canvas.addEventListener('mousemove', e=>{
     const p=toBuf(e);
     layoutQButtons(); ui.qHover=-1;
@@ -259,8 +260,9 @@ void main(){
     const overCopy = copyEnabled && copyBtnHot;
     const overUserEdit = userEditHot;
     const overAnsEdit = ansEditHot;
-    const overVideo = videoLinkRect ? ptIn(videoLinkRect, p) : false; videoLinkHot = overVideo;
-    const overImage = imageLinkRect ? ptIn(imageLinkRect, p) : false; imageLinkHot = overImage;
+  const overVideo = videoLinkRect ? ptIn(videoLinkRect, p) : false; videoLinkHot = overVideo;
+  const overImage = imageLinkRect ? ptIn(imageLinkRect, p) : false; imageLinkHot = overImage;
+  const overHintCopy = hintCopyRect ? ptIn(hintCopyRect, p) : false; hintCopyHot = overHintCopy;
     ui.hover = (term.revSplash?.active || term.glitchBurst?.active) ? null : (
       (ui.qHover!==-1) ? 'qbtn' : (
         overPyr ? 'hintToggle' : (
@@ -269,7 +271,9 @@ void main(){
               overUserEdit ? 'editUser' : (
                 overAnsEdit ? 'editAns' : (
                   overVideo ? 'video' : (
-                    overImage ? 'image' : null
+                    overImage ? 'image' : (
+                      overHintCopy ? 'hintCopy' : null
+                    )
                   )
                 )
               )
@@ -315,6 +319,10 @@ void main(){
 
   if(videoLinkRect && ptIn(videoLinkRect,p) && videoLinkHref){ try{ window.open(String(videoLinkHref), '_blank', 'noopener'); } catch {} return; }
       if(imageLinkRect && ptIn(imageLinkRect,p) && imageLinkHref){ try{ window.open(String(imageLinkHref), '_blank', 'noopener'); } catch {} return; }
+      if(hintCopyRect && ptIn(hintCopyRect,p) && hintCopyValue){
+        (async()=>{ try{ await navigator.clipboard.writeText(String(hintCopyValue)); ui.status='copied'; } catch{ ui.status='copy failed'; } })();
+        return;
+      }
       if(userEditBtnRect && ptIn(userEditBtnRect,p)){
         term.state='promptUser'; term.inputActive=true; term.inputBuffer=String(ui.user||''); term.editOnly='user'; return;
       }
@@ -431,12 +439,13 @@ void main(){
       }
 
       ctx.save(); ctx.beginPath(); ctx.rect(ir.x, ir.y, ir.w, ir.h); ctx.clip();
-  ctx.font='12px Inconsolata, monospace'; if(term.hintMode){ ctx.fillStyle='#ffc8c8'; ctx.shadowColor='rgba(255,64,64,0.14)'; } else { ctx.fillStyle='#9dffb3'; ctx.shadowColor='rgba(0,255,120,0.14)'; } ctx.shadowBlur=2;
+  ctx.font='12px Inconsolata, monospace'; if(term.hintMode){ ctx.fillStyle='#ffc8c8'; ctx.shadowColor='rgba(255,64,64,0.14)'; } else { ctx.fillStyle='#8df2a4'; ctx.shadowColor='rgba(0,255,120,0.10)'; } ctx.shadowBlur=2;
   const tx=ir.x+6, ty0=ir.y+8; const tmaxW=ir.w-12; const lineH=14; let y=ty0 - term.scroll;
       if(loadingAnim > 0){ const alpha=Math.abs(Math.cos(Math.PI*loadingAnim)); ctx.globalAlpha=0.3 + 0.7*alpha; }
 
       videoLinkRect = null; videoLinkHref = '';
       imageLinkRect = null; imageLinkHref = '';
+      hintCopyRect = null; hintCopyValue = '';
       if(!term.revSplash?.active && !term.glitchBurst?.active){
         const qobj = (Array.isArray(window.__questions) && window.__questions[ui.qIndex]) || null;
         const href = qobj && (qobj.videoUrl || qobj.video || qobj.link);
@@ -446,13 +455,13 @@ void main(){
           ctx.font='12px Inconsolata, monospace';
 
           if(term.hintMode){ ctx.fillStyle = '#ffd6d6'; ctx.shadowColor='rgba(255,64,64,0.18)'; }
-          else { ctx.fillStyle = '#b7ffe0'; ctx.shadowColor='rgba(0,255,120,0.18)'; }
+          else { ctx.fillStyle = '#a6f2d6'; ctx.shadowColor='rgba(0,255,120,0.12)'; }
           ctx.shadowBlur=3;
           ctx.fillText(label, tx, y);
           const tw = ctx.measureText(label).width;
 
           ctx.beginPath(); ctx.moveTo(tx, y+2); ctx.lineTo(tx+tw, y+2);
-          ctx.strokeStyle = term.hintMode ? '#ff9a9a' : '#19f07b'; ctx.lineWidth=1; ctx.stroke();
+          ctx.strokeStyle = term.hintMode ? '#ff9a9a' : '#15d06b'; ctx.lineWidth=1; ctx.stroke();
           ctx.restore();
           videoLinkRect = { x: tx-2, y: y-12, w: tw+4, h: lineH };
           videoLinkHref = String(href);
@@ -465,12 +474,12 @@ void main(){
           ctx.save();
           ctx.font='12px Inconsolata, monospace';
           if(term.hintMode){ ctx.fillStyle = '#ffd6d6'; ctx.shadowColor='rgba(255,64,64,0.18)'; }
-          else { ctx.fillStyle = '#b7ffe0'; ctx.shadowColor='rgba(0,255,120,0.18)'; }
+          else { ctx.fillStyle = '#a6f2d6'; ctx.shadowColor='rgba(0,255,120,0.12)'; }
           ctx.shadowBlur=3;
           ctx.fillText(label, tx, y);
           const tw = ctx.measureText(label).width;
           ctx.beginPath(); ctx.moveTo(tx, y+2); ctx.lineTo(tx+tw, y+2);
-          ctx.strokeStyle = term.hintMode ? '#ff9a9a' : '#19f07b'; ctx.lineWidth=1; ctx.stroke();
+          ctx.strokeStyle = term.hintMode ? '#ff9a9a' : '#15d06b'; ctx.lineWidth=1; ctx.stroke();
           ctx.restore();
           imageLinkRect = { x: tx-2, y: y-12, w: tw+4, h: lineH };
           imageLinkHref = String(imgHref);
@@ -492,7 +501,7 @@ void main(){
       }
 
       if(term.state!=='splash' && term.hintMode && !term.revSplash?.active && !term.glitchBurst?.active){
-        const q = (Array.isArray(window.__questions) && window.__questions[ui.qIndex]) || null;
+  const q = (Array.isArray(window.__questions) && window.__questions[ui.qIndex]) || null;
         const hasHint = q && typeof q.hint === 'string' && q.hint.trim().length > 0;
         const fmt = (q && (q.format || q.answerFormat)) || 'string';
         const spacer = 6;
@@ -508,18 +517,43 @@ void main(){
         let yPanel = y + 8; let panelH = 0;
         ctx.save();
         ctx.font='12px Inconsolata, monospace';
-        ctx.fillStyle = '#ffd6d6';
-        ctx.shadowColor='rgba(255,64,64,0.25)'; ctx.shadowBlur=6;
+  ctx.fillStyle = '#ffd6d6';
+  ctx.shadowColor='rgba(255,64,64,0.25)'; ctx.shadowBlur=6;
         if(hasHint){ wrapText(hintShown, tx, yPanel, tmaxW, lineH); const hH = measureWrapHeight(hintShown || ''); yPanel += hH + spacer; }
         wrapText(fmtShown, tx, yPanel, tmaxW, lineH); yPanel += lineH;
+
+        const copyVal = (q && (q.copyText || q.copy || q.copyString)) || '';
+        if(String(copyVal).trim().length){
+          const label = 'Copy:';
+          ctx.fillStyle='#ffd6d6';
+          ctx.shadowColor='rgba(255,64,64,0.25)';
+          ctx.shadowBlur=6;
+          ctx.fillText(label, tx, yPanel);
+          const lx = tx + ctx.measureText(label + ' ').width;
+
+          ctx.fillStyle='#ffecec';
+          const endY = wrapMonoString(String(copyVal), lx, yPanel, tmaxW - (lx - tx) - 60, lineH);
+
+          const btnW=48, btnH=16; const bx = ir.x + ir.w - btnW - 8; const by = endY - 12;
+          const hover = hintCopyHot;
+          const fillBtn = hover? 'rgba(62,10,10,0.9)' : 'rgba(40,0,0,0.78)';
+          const strokeBtn = hover? '#ff5050' : '#a83a3a';
+          roundRect({x:bx,y:by,w:btnW,h:btnH},4,fillBtn,strokeBtn);
+          ctx.save(); ctx.font='11px Inconsolata, monospace'; ctx.fillStyle='#ffdede'; const bl='COPY'; const btw=ctx.measureText(bl).width; ctx.fillText(bl, bx+(btnW-btw)/2, by+btnH-4); ctx.restore();
+          hintCopyRect = { x:bx, y:by, w:btnW, h:btnH };
+          hintCopyValue = String(copyVal);
+
+          yPanel = Math.max(endY + spacer, by + btnH + spacer);
+        } else { hintCopyRect = null; hintCopyValue=''; }
+
         ctx.restore();
         panelH = (yPanel - y) + 6; y += panelH;
       }
 
   if(!term.revSplash?.active && !term.glitchBurst?.active && term.state!=='splash' && (term.state==='promptUser' || term.state==='promptAnswer' || term.state==='hashing' || term.state==='showHash' || term.state==='done')){
-    const colLabel = term.hintMode ? '#ffb8b8' : '#a8ffc6';
-    const colValue = term.hintMode ? '#ffdede' : '#eaffef';
-    const colCaret = term.hintMode ? '#ff9a9a' : '#9cffb3';
+  const colLabel = term.hintMode ? '#ffb8b8' : '#98e9bb';
+  const colValue = term.hintMode ? '#ffdede' : '#dbfbe6';
+  const colCaret = term.hintMode ? '#ff9a9a' : '#88e3a8';
     ctx.fillStyle=colLabel; ctx.fillText('> GitHub username:', tx, y);
         const ux = tx + ctx.measureText('> GitHub username: ').width; const uname=(term.state==='promptUser') ? term.inputBuffer : (ui.user||'');
     ctx.fillStyle=colValue; ctx.fillText(uname, ux, y);
@@ -528,7 +562,7 @@ void main(){
         if(term.state!=='promptUser'){
           const btnW=44, btnH=16; const bx = ir.x + ir.w - btnW - 20; const by = y - 12; userEditBtnRect = {x:bx,y:by,w:btnW,h:btnH}; const hover=userEditHot;
           const fill = term.hintMode ? (hover? 'rgba(62,10,10,0.9)' : 'rgba(40,0,0,0.78)') : (hover? 'rgba(10,62,34,0.9)' : 'rgba(0,40,20,0.78)');
-          const stroke = term.hintMode ? (hover? '#ff5050' : '#a83a3a') : (hover? '#19f07b' : '#0aa85a');
+          const stroke = term.hintMode ? (hover? '#ff5050' : '#a83a3a') : (hover? '#15d06b' : '#0a8f4e');
           roundRect(userEditBtnRect,4,fill,stroke); ctx.save(); ctx.font='11px Inconsolata, monospace'; ctx.fillStyle= term.hintMode ? '#ffdede' : '#d8ffe6'; const label='EDIT'; const tw=ctx.measureText(label).width; ctx.fillText(label, bx+(btnW-tw)/2, by+btnH-4); ctx.restore();
         } else { userEditBtnRect=null; }
         y += lineH + 4;
@@ -542,7 +576,7 @@ void main(){
         if(term.state!=='promptAnswer'){
           const btnW=44, btnH=16; const bx = ir.x + ir.w - btnW - 20; const by = (wrapRes.lastY - 12); ansEditBtnRect = {x:bx,y:by,w:btnW,h:btnH}; const hover=ansEditHot;
           const fill2 = term.hintMode ? (hover? 'rgba(62,10,10,0.9)' : 'rgba(40,0,0,0.78)') : (hover? 'rgba(10,62,34,0.9)' : 'rgba(0,40,20,0.78)');
-          const stroke2 = term.hintMode ? (hover? '#ff5050' : '#0aa85a'.replace('#0aa85a','#a83a3a')) : (hover? '#19f07b' : '#0aa85a');
+            const stroke2 = term.hintMode ? (hover? '#ff5050' : '#0aa85a'.replace('#0aa85a','#a83a3a')) : (hover? '#15d06b' : '#0a8f4e');
           roundRect(ansEditBtnRect,4,fill2,stroke2); ctx.save(); ctx.font='11px Inconsolata, monospace'; ctx.fillStyle= term.hintMode ? '#ffdede' : '#d8ffe6'; const label='EDIT'; const tw=ctx.measureText(label).width; ctx.fillText(label, bx+(btnW-tw)/2, by+btnH-4); ctx.restore();
         } else { ansEditBtnRect=null; }
         y = wrapRes.lastY + lineH + 6;
@@ -568,8 +602,8 @@ void main(){
         ctx.font = '14px Inconsolata, monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        if(term.hintMode){ ctx.fillStyle='#ffdede'; ctx.shadowColor='rgba(255,64,64,0.5)'; }
-        else { ctx.fillStyle='#d8ffe6'; ctx.shadowColor='rgba(0,255,120,0.5)'; }
+  if(term.hintMode){ ctx.fillStyle='#ffdede'; ctx.shadowColor='rgba(255,64,64,0.5)'; }
+  else { ctx.fillStyle='#c8f5dc'; ctx.shadowColor='rgba(0,255,120,0.4)'; }
         ctx.shadowBlur=12;
         const msg = 'i wonder what happens if i click this';
         ctx.fillText(msg, cx, cy);

@@ -21,7 +21,7 @@
   <div class="app-container" id="app" style="display: none;">
     <div class="header">
       <div class="circle-wrapper">
-        <svg width="900" height="900" viewBox="0 0 900 900" style="position:absolute; top:0; left:0" aria-hidden="true"
+        <svg viewBox="0 0 900 900" style="position:absolute; inset:0; width:100%; height:100%" aria-hidden="true"
           focusable="false">
           <defs>
             <path id="outer-text-path" d="
@@ -29,6 +29,7 @@
               a 430,430 0 1,1 0,860
               a 430,430 0 1,1 0,-860
             " />
+            <!-- paths for sector label arcs will be injected by JS -->
           </defs>
           <circle cx="450" cy="450" r="380" stroke="#ffd700" stroke-width="6" fill="none" />
           <circle cx="450" cy="450" r="250" stroke="#ffd700" stroke-width="6" fill="none" />
@@ -39,6 +40,10 @@
             <line x1="450" y1="200" x2="450" y2="70" transform="rotate(216,450,450)" />
             <line x1="450" y1="200" x2="450" y2="70" transform="rotate(288,450,450)" />
           </g>
+          <!-- clickable wedge sectors -->
+          <g id="sector-wedges"></g>
+          <!-- curved labels for each sector -->
+          <g id="sector-labels"></g>
           <g id="rotating-text">
             <text font-size="32" letter-spacing="10" dominant-baseline="middle" fill="#ffd700">
               <textPath startOffset="0%" href="#outer-text-path">
@@ -52,12 +57,6 @@
           <ellipse cx="457" cy="450" rx="18" ry="14" fill="white" pointer-events="none" />
           <circle id="pupil" cx="457" cy="450" r="8" fill="black" pointer-events="none" />
         </svg>
-
-        <div class="partition-div questions" style="top: 160px; left: 220px">questions</div>
-        <div class="partition-div guide" style="top: 165px; left: 610px">guide</div>
-        <div class="partition-div osdc" style="top: 490px; left: 720px">osdc</div>
-        <div class="partition-div result" style="top: 720px; left: 420px">leaderboard</div>
-        <div class="partition-div about" style="top: 495px; left: 110px">about</div>
 
         <div class="osdc-nodes">
           <a href="https://chat.whatsapp.com/CFewmdu2yXKD8bpg2t5gB4?mode=r_t" target="_blank" class="icon-node whatsapp"
