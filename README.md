@@ -63,6 +63,6 @@ If a check fails, open the PR “Checks” tab to see which script reported an e
 - Click around stuff. Maybe you'd find something.
 
 ## FAQ
-  - At the top of the terminal area: ▶ Watch video and 🖼 View image links open in a new tab.
+  - At the top of the terminal area: Watch video and View image links open in a new tab.
 - Can I submit without using the UI token?
   - CI requires the token format. If you know your answer is right, still use the UI to produce the correct `<hash>:<nonce>` pair.
