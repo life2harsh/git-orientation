@@ -54,7 +54,7 @@ const rotatingGroup = document.getElementById("rotating-text");
         return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
       }
 
-      sectors.forEach((s, i) => {
+      sectors.forEach((s) => {
         const start = s.baseAngle;
         const end = s.baseAngle + sweep;
 
@@ -62,9 +62,7 @@ const rotatingGroup = document.getElementById("rotating-text");
         const p2 = polarToCartesian(cx, cy, rOuter, start);
         const p3 = polarToCartesian(cx, cy, rOuter, end);
         const p4 = polarToCartesian(cx, cy, rInner, end);
-
         const largeArc = sweep > 180 ? 1 : 0;
-
         const d = [
           `M ${p1.x} ${p1.y}`,
           `L ${p2.x} ${p2.y}`,
@@ -79,67 +77,132 @@ const rotatingGroup = document.getElementById("rotating-text");
         path.setAttribute('fill', 'rgba(255,215,0,0.08)');
         path.setAttribute('stroke', '#ffd70055');
         path.setAttribute('class', `sector-wedge sector-${s.key}`);
-
-        if(s.href){
-          path.addEventListener('click', () => window.location.href = s.href);
-        } else if (s.key === 'osdc') {
-          const osdcNodes = document.querySelector('.osdc-nodes');
-          path.addEventListener('click', () => {
-            const visible = osdcNodes.style.opacity === '1';
-            osdcNodes.style.opacity = visible ? '0' : '1';
-            osdcNodes.style.pointerEvents = visible ? 'none' : 'auto';
-          });
+        if (s.href) {
+          path.addEventListener('click', () => (window.location.href = s.href));
         }
-
         wedgesGroup.appendChild(path);
 
-        const rLabel = (rInner + rOuter)/2 + 5;
+        const rLabel = (rInner + rOuter) / 2 + 5;
         const a1 = start + 3;
         const a2 = end - 3;
         const midA = (start + end) / 2;
         const midP = polarToCartesian(cx, cy, rLabel, midA);
-        const isBottom = midP.y > cy; 
-
+        const isBottom = midP.y > cy;
         const lp1 = polarToCartesian(cx, cy, rLabel, a1);
         const lp2 = polarToCartesian(cx, cy, rLabel, a2);
 
-        // For bottom keys, render a simple centered horizontal label for guaranteed readability
-        if (s.key === 'leaderboard' || s.key === 'about') {
-          const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-          text.setAttribute('fill', '#ffd700');
-          text.setAttribute('font-size', '22');
-          text.setAttribute('letter-spacing','2');
-          text.setAttribute('style','filter: drop-shadow(0 0 6px #ffd700)');
-          text.setAttribute('text-anchor','middle');
-          text.setAttribute('dominant-baseline','middle');
-          text.setAttribute('x', midP.x);
-          text.setAttribute('y', midP.y);
-          text.textContent = s.text;
-          labelsGroup.appendChild(text);
-        } else {
-          // Default: curved label along arc
-          const labelId = `sector-label-path-${s.key}`;
-          const labelPath = document.createElementNS('http://www.w3.org/2000/svg','path');
-          // clockwise small arc from a1 -> a2
-          labelPath.setAttribute('d', `M ${lp1.x} ${lp1.y} A ${rLabel} ${rLabel} 0 0 1 ${lp2.x} ${lp2.y}`);
-          labelPath.setAttribute('id', labelId);
-          labelPath.setAttribute('fill','none');
-          labelsGroup.appendChild(labelPath);
+        const labelId = `sector-label-path-${s.key}`;
+        const labelPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+        if (isBottom) {
 
-          const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-          text.setAttribute('fill', '#ffd700');
-          text.setAttribute('font-size', '22');
-          text.setAttribute('letter-spacing','2');
-          text.setAttribute('style','filter: drop-shadow(0 0 6px #ffd700)');
-          const textPath = document.createElementNS('http://www.w3.org/2000/svg','textPath');
-          textPath.setAttributeNS('http://www.w3.org/1999/xlink','href', `#${labelId}`);
-          textPath.setAttribute('startOffset','50%');
-          textPath.setAttribute('text-anchor','middle');
-          textPath.textContent = s.text;
-          text.appendChild(textPath);
-          labelsGroup.appendChild(text);
+          labelPath.setAttribute('d', `M ${lp2.x} ${lp2.y} A ${rLabel} ${rLabel} 0 0 0 ${lp1.x} ${lp1.y}`);
+        } else {
+          labelPath.setAttribute('d', `M ${lp1.x} ${lp1.y} A ${rLabel} ${rLabel} 0 0 1 ${lp2.x} ${lp2.y}`);
         }
+        labelPath.setAttribute('id', labelId);
+        labelPath.setAttribute('fill', 'none');
+        labelsGroup.appendChild(labelPath);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('fill', '#ffd700');
+        text.setAttribute('font-size', '22');
+        text.setAttribute('letter-spacing','2');
+        text.setAttribute('style','filter: drop-shadow(0 0 6px #ffd700)');
+        const textPath = document.createElementNS('http://www.w3.org/2000/svg','textPath');
+        textPath.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${labelId}`);
+        textPath.setAttribute('startOffset', '50%');
+        textPath.setAttribute('text-anchor', 'middle');
+        textPath.textContent = s.text; 
+        text.appendChild(textPath);
+        labelsGroup.appendChild(text);
       });
+
+      const oldNodesDiv = document.querySelector('.osdc-nodes');
+      if (oldNodesDiv) oldNodesDiv.style.display = 'none';
+
+      const wrapper = document.querySelector('.circle-wrapper');
+      let osdcOverlay = wrapper.querySelector('#osdc-overlay');
+      if (!osdcOverlay) {
+        osdcOverlay = document.createElement('div');
+        osdcOverlay.id = 'osdc-overlay';
+        osdcOverlay.style.position = 'absolute';
+        osdcOverlay.style.inset = '0';
+        osdcOverlay.style.overflow = 'visible';
+        osdcOverlay.style.opacity = '0';
+        osdcOverlay.style.pointerEvents = 'none';
+        osdcOverlay.style.transition = 'opacity .25s ease';
+        wrapper.appendChild(osdcOverlay);
+      }
+
+      const osdcMid = sectors.find(s => s.key === 'osdc').baseAngle + sweep/2; 
+      const iconPx = 42; 
+      const offsets = [-12, 0, 12];
+      const radii = [rOuter + 20, rOuter + 50, rOuter + 80];
+      const links = [
+        { href: 'https://chat.whatsapp.com/CFewmdu2yXKD8bpg2t5gB4?mode=r_t', img: 'assets/whatsapp.jpeg', alt: 'Whatsapp' },
+        { href: 'https://www.instagram.com/osdc.dev?igsh=ZHFuMTJrYjZoNGho', img: 'assets/instagram.png', alt: 'Instagram' },
+        { href: 'https://discord.com/invite/jiit-open-source-developer-s-community-475154983910899722', img: 'assets/discord.png', alt: 'Discord' },
+      ];
+
+      osdcOverlay.innerHTML = '';
+      const overlayItems = [];
+      links.forEach((link, idx) => {
+        const ang = osdcMid + offsets[idx];
+        const pos = polarToCartesian(cx, cy, radii[idx], ang);
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'osdc-icon';
+        a.style.position = 'absolute';
+        a.style.width = `${iconPx}px`;
+        a.style.height = `${iconPx}px`;
+        a.style.filter = 'drop-shadow(0 0 6px #ffd700)';
+        a.style.pointerEvents = 'auto';
+
+        a.dataset.svgsx = String(pos.x);
+        a.dataset.svgsy = String(pos.y);
+        const img = document.createElement('img');
+        img.src = link.img;
+        img.alt = link.alt;
+        img.width = iconPx;
+        img.height = iconPx;
+        img.style.display = 'block';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.borderRadius = '6px';
+        a.appendChild(img);
+        osdcOverlay.appendChild(a);
+        overlayItems.push(a);
+      });
+
+      function positionOverlayIcons() {
+        const rect = wrapper.getBoundingClientRect();
+
+        const scaleX = rect.width / 900;
+        const scaleY = rect.height / 900;
+        overlayItems.forEach((el) => {
+          const sx = parseFloat(el.dataset.svgsx);
+          const sy = parseFloat(el.dataset.svgsy);
+          const left = sx * scaleX - iconPx / 2;
+          const top = sy * scaleY - iconPx / 2;
+          el.style.left = `${left}px`;
+          el.style.top = `${top}px`;
+        });
+      }
+      positionOverlayIcons();
+      window.addEventListener('resize', positionOverlayIcons);
+
+      const osdcWedge = svg.querySelector('.sector-osdc');
+      if (osdcWedge) {
+        osdcWedge.addEventListener('click', () => {
+
+          positionOverlayIcons();
+          const visible = osdcOverlay.style.opacity === '1';
+          osdcOverlay.style.opacity = visible ? '0' : '1';
+
+        });
+      }
     })();
 const loadingScreen = document.getElementById('loadingScreen');
 
@@ -148,5 +211,7 @@ setTimeout(() => {
   setTimeout(() => {
     loadingScreen.style.display = 'none';
     document.getElementById('app').style.display = 'block';
+
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
   }, 1000);
 }, 3000);
