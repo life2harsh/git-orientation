@@ -30,7 +30,6 @@ const rotatingGroup = document.getElementById("rotating-text");
       pupil.setAttribute('cy', eyeCenter.y + dy);
     });
 
-    // Build clickable wedge sectors and curved labels
     (function buildSectors(){
       const svg = document.querySelector('.circle-wrapper svg');
       const wedgesGroup = svg.querySelector('#sector-wedges');
@@ -38,8 +37,8 @@ const rotatingGroup = document.getElementById("rotating-text");
       if(!svg || !wedgesGroup || !labelsGroup) return;
 
       const cx = 450, cy = 450;
-      const rInner = 255; // just outside inner circle
-      const rOuter = 380; // matches outer circle
+      const rInner = 255; 
+      const rOuter = 380; 
       const sectors = [
         { key: 'questions', text: 'questions', href: 'questions.html', baseAngle: -90 },
         { key: 'guide', text: 'guide', href: 'guide.html', baseAngle: -90 + 72 },
@@ -48,10 +47,10 @@ const rotatingGroup = document.getElementById("rotating-text");
         { key: 'about', text: 'about', href: 'about.html', baseAngle: -90 + 288 },
       ];
 
-      const sweep = 72; // 360/5
+      const sweep = 72; 
 
       function polarToCartesian(cx, cy, r, angleDeg){
-        const rad = (angleDeg-90) * Math.PI/180; // SVG arc uses 0 at 3 o'clock; adjust for math
+        const rad = (angleDeg-90) * Math.PI/180; 
         return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
       }
 
@@ -94,16 +93,24 @@ const rotatingGroup = document.getElementById("rotating-text");
 
         wedgesGroup.appendChild(path);
 
-        // label path at mid radius
         const rLabel = (rInner + rOuter)/2 + 5;
         const a1 = start + 3;
         const a2 = end - 3;
+        const midA = (start + end) / 2;
+        const midP = polarToCartesian(cx, cy, rLabel, midA);
+        const isBottom = midP.y > cy; 
+
         const lp1 = polarToCartesian(cx, cy, rLabel, a1);
         const lp2 = polarToCartesian(cx, cy, rLabel, a2);
         const labelId = `sector-label-path-${s.key}`;
         const labelPath = document.createElementNS('http://www.w3.org/2000/svg','path');
-        const sweepFlag = (a2 - a1) > 180 ? 1 : 0;
-        labelPath.setAttribute('d', `M ${lp1.x} ${lp1.y} A ${rLabel} ${rLabel} 0 ${sweepFlag} 1 ${lp2.x} ${lp2.y}`);
+        if(!isBottom){
+
+          labelPath.setAttribute('d', `M ${lp1.x} ${lp1.y} A ${rLabel} ${rLabel} 0 0 1 ${lp2.x} ${lp2.y}`);
+        } else {
+
+          labelPath.setAttribute('d', `M ${lp2.x} ${lp2.y} A ${rLabel} ${rLabel} 0 0 0 ${lp1.x} ${lp1.y}`);
+        }
         labelPath.setAttribute('id', labelId);
         labelPath.setAttribute('fill','none');
         labelsGroup.appendChild(labelPath);
@@ -117,6 +124,11 @@ const rotatingGroup = document.getElementById("rotating-text");
         textPath.setAttributeNS('http://www.w3.org/1999/xlink','href', `#${labelId}`);
         textPath.setAttribute('startOffset','50%');
         textPath.setAttribute('text-anchor','middle');
+        if(isBottom){
+
+          text.setAttribute('direction','rtl');
+          text.setAttribute('unicode-bidi','bidi-override');
+        }
         textPath.textContent = s.text;
         text.appendChild(textPath);
         labelsGroup.appendChild(text);
@@ -131,6 +143,3 @@ setTimeout(() => {
     document.getElementById('app').style.display = 'block';
   }, 1000);
 }, 3000);
-
-
-
