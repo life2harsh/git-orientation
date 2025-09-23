@@ -102,36 +102,43 @@ const rotatingGroup = document.getElementById("rotating-text");
 
         const lp1 = polarToCartesian(cx, cy, rLabel, a1);
         const lp2 = polarToCartesian(cx, cy, rLabel, a2);
-        const labelId = `sector-label-path-${s.key}`;
-        const labelPath = document.createElementNS('http://www.w3.org/2000/svg','path');
-        if(!isBottom){
 
-          labelPath.setAttribute('d', `M ${lp1.x} ${lp1.y} A ${rLabel} ${rLabel} 0 0 1 ${lp2.x} ${lp2.y}`);
+        // For bottom keys, render a simple centered horizontal label for guaranteed readability
+        if (s.key === 'leaderboard' || s.key === 'about') {
+          const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+          text.setAttribute('fill', '#ffd700');
+          text.setAttribute('font-size', '22');
+          text.setAttribute('letter-spacing','2');
+          text.setAttribute('style','filter: drop-shadow(0 0 6px #ffd700)');
+          text.setAttribute('text-anchor','middle');
+          text.setAttribute('dominant-baseline','middle');
+          text.setAttribute('x', midP.x);
+          text.setAttribute('y', midP.y);
+          text.textContent = s.text;
+          labelsGroup.appendChild(text);
         } else {
+          // Default: curved label along arc
+          const labelId = `sector-label-path-${s.key}`;
+          const labelPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+          // clockwise small arc from a1 -> a2
+          labelPath.setAttribute('d', `M ${lp1.x} ${lp1.y} A ${rLabel} ${rLabel} 0 0 1 ${lp2.x} ${lp2.y}`);
+          labelPath.setAttribute('id', labelId);
+          labelPath.setAttribute('fill','none');
+          labelsGroup.appendChild(labelPath);
 
-          labelPath.setAttribute('d', `M ${lp2.x} ${lp2.y} A ${rLabel} ${rLabel} 0 0 0 ${lp1.x} ${lp1.y}`);
+          const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+          text.setAttribute('fill', '#ffd700');
+          text.setAttribute('font-size', '22');
+          text.setAttribute('letter-spacing','2');
+          text.setAttribute('style','filter: drop-shadow(0 0 6px #ffd700)');
+          const textPath = document.createElementNS('http://www.w3.org/2000/svg','textPath');
+          textPath.setAttributeNS('http://www.w3.org/1999/xlink','href', `#${labelId}`);
+          textPath.setAttribute('startOffset','50%');
+          textPath.setAttribute('text-anchor','middle');
+          textPath.textContent = s.text;
+          text.appendChild(textPath);
+          labelsGroup.appendChild(text);
         }
-        labelPath.setAttribute('id', labelId);
-        labelPath.setAttribute('fill','none');
-        labelsGroup.appendChild(labelPath);
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-        text.setAttribute('fill', '#ffd700');
-        text.setAttribute('font-size', '22');
-        text.setAttribute('letter-spacing','2');
-        text.setAttribute('style','filter: drop-shadow(0 0 6px #ffd700)');
-        const textPath = document.createElementNS('http://www.w3.org/2000/svg','textPath');
-        textPath.setAttributeNS('http://www.w3.org/1999/xlink','href', `#${labelId}`);
-        textPath.setAttribute('startOffset','50%');
-        textPath.setAttribute('text-anchor','middle');
-        if(isBottom){
-
-          text.setAttribute('direction','rtl');
-          text.setAttribute('unicode-bidi','bidi-override');
-        }
-        textPath.textContent = s.text;
-        text.appendChild(textPath);
-        labelsGroup.appendChild(text);
       });
     })();
 const loadingScreen = document.getElementById('loadingScreen');
