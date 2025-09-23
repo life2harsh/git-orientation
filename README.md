@@ -5,7 +5,7 @@ A puzzle-style Git and GitHub orientation. Solve questions in the web UI, genera
 ## Using the UI
 
 - Question navigation: the Q buttons at the top switch questions.
-- Media: some questions include a video (▶ Watch video) or image (🖼 View image) link shown at the top. They open in a new tab.
+- Media: some questions include a video (Watch video) or image (View image) link shown at the top. They open in a new tab.
 - Hint Mode: click the small rotating pyramid at the bottom-right of the terminal area to toggle Hint Mode. In Hint Mode, the panel shows a typewriter reveal for Hint and Format. Some questions may provide a Copy value.
 - Editing inputs: You can edit your GitHub username and answer any time using the EDIT buttons.
 - Generate token: After entering both fields, a token appears under “Hash:”. Use the COPY HASH button in the lower-right to copy it.
